@@ -1,11 +1,16 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\AuthApiController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/test', function () {
-    return response()->json([
-        'success' => true,
-        'message' => 'API works!',
-        'timestamp' => now(),
-    ]);
-});
+Route::post('/users', [UserController::class, 'getList'])->middleware([
+    'auth:sanctum',
+    'ability:user:show'
+]);
+
+//Auth Tokens
+Route::post('/auth/login', [AuthApiController::class, 'login']);
+Route::get('/auth/me', [AuthApiController::class, 'me'])->middleware('auth:sanctum');;
+Route::post('/auth/register', [AuthApiController::class, 'register']);
+Route::post('/auth/logout', [AuthApiController::class, 'logout'])->middleware('auth:sanctum');
