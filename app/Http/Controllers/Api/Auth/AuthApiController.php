@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Api\AbstractApiController;
 use App\Models\User;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -11,11 +12,7 @@ use Illuminate\Validation\ValidationException;
 
 
 class AuthApiController extends AbstractApiController {
-    public $json = [
-        'success' => true,
-        'message' => '',
-        'data' => []
-    ];
+    use ApiResponseTrait;
 
     public function login(Request $request) {
 
@@ -26,8 +23,7 @@ class AuthApiController extends AbstractApiController {
                 'device'    => 'required|string'
             ]);
         } catch (ValidationException $err) {
-            $this->json['message'] = $err->getMessage();
-            $this->response(422);
+            return $this->error([], $err->getMessage(), 422);
         }
 
         $user =  User::where('email', $request->email)->first();
@@ -39,15 +35,12 @@ class AuthApiController extends AbstractApiController {
                 ]);
             }
 
-            $this->json['data'] = [
-                'auth_token' => $user->createToken($request->device, ["user:show"])->plainTextToken,
-            ];
-
-            $this->response(200);
+            return $this->success([
+                'auth_token' => $user->createToken($request->device, ["user:show"])->plainTextToken
+            ], "", 200);
 
         } catch(\Exception $err) {
-            $this->json['message'] = $err->getMessage();
-            $this->response();
+            return $this->error([], $err->getMessage(), 422);
         }
     }
 
@@ -60,8 +53,7 @@ class AuthApiController extends AbstractApiController {
                 'device'    => ['required', 'string'],
             ]);
         } catch (ValidationException $err) {
-            $this->json['message'] = $err->getMessage();
-            $this->response(422);
+            return $this->error([], $err->getMessage(), 422);
         }
         try {
             $user = User::create([
@@ -70,22 +62,20 @@ class AuthApiController extends AbstractApiController {
                 'password' => Hash::make($request->password),
             ]);
 
-            $this->json['data'] = [
+            return $this->success([
                 'user_created' => $user,
                 'auth_token' => $user->createToken($request->device, ["user:show"])->plainTextToken,
-            ];
-
-            $this->response(Response::HTTP_CREATED);
+            ], "", Response::HTTP_CREATED);
 
         } catch(\Exception $err) {
-            $this->json['message'] = $err->getMessage();
-            $this->response(500);
+            return $this->error([], $err->getMessage(), 500);
         }
     }
 
     public function me(Request $request) {
-        $this->json["data"] = $request->user();
-        $this->response(200);
+        return $this->success([
+            $request->user()
+        ], "", 200);
     }
 
     public function logout(Request $request) {
@@ -93,11 +83,9 @@ class AuthApiController extends AbstractApiController {
         try {
             $request->user()->tokens()->delete();
         } catch(\Exception $err) {
-            $this->json['success'] = false;
-            $status = 401;
-            $this->json['message'] = $err->getMessage();
+            $this->error([], $err->getMessage(), 401);
         }
 
-        $this->response($status);
+        return $this->success([], "Logout was successfully", 200);
     }
 }
