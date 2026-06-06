@@ -32,12 +32,12 @@ trait ApiResponseTrait
      * @param mixed $debug (optional debug info for dev)
      * @return JsonResponse
      */
-    public function error($message = '', $code = 400, $errors = []): JsonResponse
+    public function error($message = '', $code = 400,): JsonResponse
     {
         return response()->json([
             'success' => false,
             'message' => $message,
-            'errors' => $errors,
+            'data'    => []
         ], $code);
     }
 }

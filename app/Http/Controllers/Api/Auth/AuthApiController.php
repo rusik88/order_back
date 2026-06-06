@@ -58,7 +58,7 @@ class AuthApiController extends AbstractApiController {
                 'device'    => 'required|string'
             ]);
         } catch (ValidationException $err) {
-            return $this->error([], $err->getMessage(), 422);
+            return $this->error($err->getMessage(), 422);
         }
 
         $user =  User::where('email', $request->email)->first();
@@ -75,7 +75,7 @@ class AuthApiController extends AbstractApiController {
             ], "", 200);
 
         } catch(\Exception $err) {
-            return $this->error([], $err->getMessage(), 422);
+            return $this->error($err->getMessage(), 422);
         }
     }
 
@@ -108,7 +108,7 @@ class AuthApiController extends AbstractApiController {
                 'device'    => ['required', 'string'],
             ]);
         } catch (ValidationException $err) {
-            return $this->error([], $err->getMessage(), 422);
+            return $this->error($err->getMessage(), 422);
         }
         try {
             $user = User::create([
@@ -123,7 +123,7 @@ class AuthApiController extends AbstractApiController {
             ], "", Response::HTTP_CREATED);
 
         } catch(\Exception $err) {
-            return $this->error([], $err->getMessage(), 500);
+            return $this->error($err->getMessage(), 500);
         }
     }
 
@@ -154,7 +154,7 @@ class AuthApiController extends AbstractApiController {
         try {
             $request->user()->tokens()->delete();
         } catch(\Exception $err) {
-            $this->error([], $err->getMessage(), 401);
+            $this->error($err->getMessage(), 401);
         }
 
         return $this->success([], "Logout was successfully", 200);
