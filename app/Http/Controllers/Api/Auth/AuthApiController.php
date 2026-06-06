@@ -38,10 +38,24 @@ class AuthApiController extends AbstractApiController {
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: ''),
                         new OA\Property(
                             property: "data",
                             properties: [
-                                new OA\Property(property: "auth_token", type: "string")
+                                new OA\Property(property: "auth_token", type: "string", example: "BEARER_TOKEN"),
+                                new OA\Property(
+                                    property: "user",
+                                    properties: [
+                                        new OA\Property(property: "id", type: "number", example: 2),
+                                        new OA\Property(property: "name", type: "string", example: "John Doe"),
+                                        new OA\Property(property: "email", type: "string", example: "test@test.com"),
+                                        new OA\Property(property: "email_verified_at", type: "string", example: null),
+                                        new OA\Property(property: "created_at", type: "datetime"),
+                                        new OA\Property(property: "updated_at", type: "datetime"),
+
+                                    ],
+                                    type: "object"
+                                )
                             ],
                             type: "object"
                         )
@@ -71,6 +85,7 @@ class AuthApiController extends AbstractApiController {
             }
 
             return $this->success([
+                'user' => $user,
                 'auth_token' => $user->createToken($request->device, ["user:show"])->plainTextToken
             ], "", 200);
 
@@ -87,16 +102,45 @@ class AuthApiController extends AbstractApiController {
             content: new OA\JsonContent(
                 required: ["name", "email", "password", "device"],
                 properties: [
-                    new OA\Property(property: "name", type: "string"),
-                    new OA\Property(property: "email", type: "string"),
-                    new OA\Property(property: "password", type: "string"),
-                    new OA\Property(property: "device", type: "string"),
+                    new OA\Property(property: "name", type: "string", example: "John Doe"),
+                    new OA\Property(property: "email", type: "string", example: "test@stest.com"),
+                    new OA\Property(property: "password", type: "string", example: "password"),
+                    new OA\Property(property: "device", type: "string", example: "password"),
                 ]
             )
         ),
         tags: ["Auth"],
         responses: [
-            new OA\Response(response: 201, description: "User created")
+            new OA\Response(
+                response: 200,
+                description: "Success",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: ''),
+                        new OA\Property(
+                            property: "data",
+                            properties: [
+                                new OA\Property(property: "auth_token", type: "string", example: "BEARER_TOKEN"),
+                                new OA\Property(
+                                    property: "user",
+                                    properties: [
+                                        new OA\Property(property: "id", type: "number", example: 2),
+                                        new OA\Property(property: "name", type: "string", example: "John Doe"),
+                                        new OA\Property(property: "email", type: "string", example: "test@test.com"),
+                                        new OA\Property(property: "email_verified_at", type: "string", example: null),
+                                        new OA\Property(property: "created_at", type: "datetime"),
+                                        new OA\Property(property: "updated_at", type: "datetime"),
+
+                                    ],
+                                    type: "object"
+                                )
+                            ],
+                            type: "object"
+                        )
+                    ]
+                )
+            )
         ]
     )]
     public function register(Request $request): JsonResponse {
@@ -118,7 +162,7 @@ class AuthApiController extends AbstractApiController {
             ]);
 
             return $this->success([
-                'user_created' => $user,
+                'user' => $user,
                 'auth_token' => $user->createToken($request->device, ["user:show"])->plainTextToken,
             ], "", Response::HTTP_CREATED);
 
@@ -132,7 +176,28 @@ class AuthApiController extends AbstractApiController {
         security: [["bearerAuth" => []]],
         tags: ["Auth"],
         responses: [
-            new OA\Response(response: 200, description: "Current user data")
+            new OA\Response(
+                response: 200,
+                description: "Success",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: ''),
+                        new OA\Property(
+                            property: "data",
+                            properties: [
+                                new OA\Property(property: "id", type: "number", example: 2),
+                                new OA\Property(property: "name", type: "string", example: "John Doe"),
+                                new OA\Property(property: "email", type: "string", example: "test@test.com"),
+                                new OA\Property(property: "email_verified_at", type: "string", example: null),
+                                new OA\Property(property: "created_at", type: "datetime"),
+                                new OA\Property(property: "updated_at", type: "datetime"),
+                            ],
+                            type: "object"
+                        )
+                    ]
+                )
+            )
         ]
     )]
     public function me(Request $request): JsonResponse {
@@ -146,7 +211,21 @@ class AuthApiController extends AbstractApiController {
         security: [["bearerAuth" => []]],
         tags: ["Auth"],
         responses: [
-            new OA\Response(response: 200, description: "Logged out")
+            new OA\Response(
+                response: 200,
+                description: "Success",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: ''),
+                        new OA\Property(
+                            property: "data",
+                            properties: [],
+                            type: "object"
+                        )
+                    ]
+                )
+            )
         ]
     )]
     public function logout(Request $request): JsonResponse {
