@@ -2,6 +2,8 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Api\AbstractApiController;
+use App\Http\Requests\Api\LoginRequest;
+use App\Http\Requests\Api\RegisterRequest;
 use App\Models\User;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
@@ -64,16 +66,8 @@ class AuthApiController extends AbstractApiController {
             )
         ]
     )]
-    public function login(Request $request): JsonResponse {
-        try {
-            $request->validate([
-                'email'     => 'required|string|email',
-                'password'  => 'required|string',
-                'device'    => 'required|string'
-            ]);
-        } catch (ValidationException $err) {
-            return $this->error($err->getMessage(), 422);
-        }
+
+    public function login(LoginRequest $request): JsonResponse {
 
         $user =  User::where('email', $request->email)->first();
 
@@ -143,17 +137,7 @@ class AuthApiController extends AbstractApiController {
             )
         ]
     )]
-    public function register(Request $request): JsonResponse {
-        try {
-            $request->validate([
-                'email'     => ['required', 'string', 'email', 'max:255', 'unique:users'],
-                'name'      => ['required', 'string', 'max:255'],
-                'password'  => ['required', 'string', 'min:8', 'confirmed', Password::defaults()],
-                'device'    => ['required', 'string'],
-            ]);
-        } catch (ValidationException $err) {
-            return $this->error($err->getMessage(), 422);
-        }
+    public function register(RegisterRequest $request): JsonResponse {
         try {
             $user = User::create([
                 'name' => $request->name,
