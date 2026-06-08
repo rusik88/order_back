@@ -18,10 +18,10 @@ class RoleApiController extends AbstractApiController
     #[OA\Get(
         path: "/api/roles",
         summary: "Get paginated roles list",
-        tags: ["Roles"],
         security: [
             ["bearerAuth" => []]
         ],
+        tags: ["Roles"],
         parameters: [
             new OA\Parameter(
                 name: "page",
@@ -101,7 +101,6 @@ class RoleApiController extends AbstractApiController
         security: [
             ["bearerAuth" => []]
         ],
-        tags: ["Roles"],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -118,6 +117,7 @@ class RoleApiController extends AbstractApiController
                 ]
             )
         ),
+        tags: ["Roles"],
         responses: [
             new OA\Response(
                 response: 201,
@@ -131,12 +131,12 @@ class RoleApiController extends AbstractApiController
                             properties: [
                                 new OA\Property(
                                     property: "role",
-                                    type: "object",
                                     properties: [
                                         new OA\Property(property: "id", type: "integer"),
                                         new OA\Property(property: "name", type: "string"),
                                         new OA\Property(property: "slug", type: "string"),
-                                    ]
+                                    ],
+                                    type: "object"
                                 )
                             ]
                         )
@@ -166,10 +166,10 @@ class RoleApiController extends AbstractApiController
     #[OA\Get(
         path: "/api/roles/{id}",
         summary: "Get role by id",
-        tags: ["Roles"],
         security: [
             ["bearerAuth" => []]
         ],
+        tags: ["Roles"],
         parameters: [
             new OA\Parameter(
                 name: "id",
@@ -205,7 +205,6 @@ class RoleApiController extends AbstractApiController
     #[OA\Patch(
         path: "/api/roles/{id}",
         summary: "Update role",
-        tags: ["Roles"],
         security: [
             ["bearerAuth" => []]
         ],
@@ -224,6 +223,7 @@ class RoleApiController extends AbstractApiController
                 ]
             )
         ),
+        tags: ["Roles"],
         parameters: [
             new OA\Parameter(
                 name: "id",
@@ -264,10 +264,10 @@ class RoleApiController extends AbstractApiController
     #[OA\Delete(
         path: "/api/roles/{id}",
         summary: "Delete role",
-        tags: ["Roles"],
         security: [
             ["bearerAuth" => []]
         ],
+        tags: ["Roles"],
         parameters: [
             new OA\Parameter(
                 name: "id",
