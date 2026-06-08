@@ -314,6 +314,311 @@
                     }
                 ]
             }
+        },
+        "/api/roles": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Get paginated roles list",
+                "operationId": "9bb5079b025c087a1d03ccfa9d4c9843",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Roles list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "roles": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "paginate": {
+                                                    "properties": {
+                                                        "current_page": {
+                                                            "type": "integer"
+                                                        },
+                                                        "from": {
+                                                            "type": "integer"
+                                                        },
+                                                        "last_page": {
+                                                            "type": "integer"
+                                                        },
+                                                        "per_page": {
+                                                            "type": "integer"
+                                                        },
+                                                        "to": {
+                                                            "type": "integer"
+                                                        },
+                                                        "total": {
+                                                            "type": "integer"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Create role",
+                "operationId": "c608457689512bc52c5d2b59a10b57af",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "slug"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Administrator"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    },
+                                    "permissions": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "users.view",
+                                            "users.create"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Role created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Role created successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "role": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer"
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "slug": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/roles/{id}": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Get role by id",
+                "operationId": "d7ca80dc117097bb90c70369a14e33d8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Role found"
+                    },
+                    "404": {
+                        "description": "Role not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Delete role",
+                "operationId": "7f6d77ca026a3f2b279aa0c910860942",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Update role",
+                "operationId": "5fd57a6cd7a75ce3b889c964842ad669",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Admin"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    },
+                                    "permissions": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "users.view"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -329,6 +634,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Roles",
+            "description": "Roles"
         }
     ]
 }

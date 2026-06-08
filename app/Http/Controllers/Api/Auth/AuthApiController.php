@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use OpenApi\Attributes as OA;
 
@@ -84,7 +83,7 @@ class AuthApiController extends AbstractApiController {
             ], "", 200);
 
         } catch(\Exception $err) {
-            return $this->error($err->getMessage(), 422);
+            return $this->error($err->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 
@@ -151,7 +150,7 @@ class AuthApiController extends AbstractApiController {
             ], "", Response::HTTP_CREATED);
 
         } catch(\Exception $err) {
-            return $this->error($err->getMessage(), 500);
+            return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -187,7 +186,7 @@ class AuthApiController extends AbstractApiController {
     public function me(Request $request): JsonResponse {
         return $this->success([
             $request->user()
-        ], "", 200);
+        ], "");
     }
 
     #[OA\Post(
@@ -213,13 +212,12 @@ class AuthApiController extends AbstractApiController {
         ]
     )]
     public function logout(Request $request): JsonResponse {
-        $status = 200;
         try {
             $request->user()->tokens()->delete();
         } catch(\Exception $err) {
-            $this->error($err->getMessage(), 401);
+            $this->error($err->getMessage(), Response::HTTP_UNAUTHORIZED);
         }
 
-        return $this->success([], "Logout was successfully", 200);
+        return $this->success([], "Logout was successfully");
     }
 }
