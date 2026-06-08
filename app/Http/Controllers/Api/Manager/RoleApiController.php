@@ -34,6 +34,12 @@ class RoleApiController extends AbstractApiController
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "integer", example: 10)
+            ),
+            new OA\Parameter(
+                name: "name",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string", example: 'Admin')
             )
         ],
         responses: [
@@ -80,7 +86,13 @@ class RoleApiController extends AbstractApiController
     public function index(Request $request): JsonResponse
     {
         $perPage = (int) $request->query('per_page', 10);
-        $roles = Role::paginate($perPage);
+        $filter_name = $request->query('name');
+
+        $roles = Role::query()
+            ->when($filter_name, function ($query, $name) {
+                $query->where('name', 'like', "%{$name}%");
+            })
+            ->paginate($perPage);
 
         return $this->success([
             'roles' => $roles->items(),
