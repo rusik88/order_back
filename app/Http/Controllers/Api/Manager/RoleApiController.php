@@ -40,6 +40,18 @@ class RoleApiController extends AbstractApiController
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "string", example: 'Admin')
+            ),
+            new OA\Parameter(
+                name: "sort_field",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string", example: 'name')
+            ),
+            new OA\Parameter(
+                name: "sort_direction",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string", example: 'asc')
             )
         ],
         responses: [
@@ -88,9 +100,15 @@ class RoleApiController extends AbstractApiController
         $perPage = (int) $request->query('per_page', 10);
         $filter_name = $request->query('name');
 
+        $sortField = $request->query('sort_field', 'name');
+        $sortDirection = $request->query('sort_direction', 'asc');
+
         $roles = Role::query()
             ->when($filter_name, function ($query, $name) {
                 $query->where('name', 'like', "%{$name}%");
+            })
+            ->when(in_array($sortField, ['name', 'slug']), function ($query) use ($sortField, $sortDirection) {
+                $query->orderBy($sortField, $sortDirection === 'desc' ? 'desc' : 'asc');
             })
             ->paginate($perPage);
 
