@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Role;
+namespace App\Http\Requests\Setting;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class UpdateRoleRequest extends FormRequest
+class UpdateSettingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +23,7 @@ class UpdateRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', Rule::unique('roles', 'slug')->ignore($this->role)],
-            'permissions' => ['array']
+            'settings' => ['required', 'array']
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Auth\AuthApiController;
 use App\Http\Controllers\Api\Manager\RoleApiController;
+use App\Http\Controllers\Api\Manager\SettingsApiController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,4 +18,11 @@ Route::post('/auth/register', [AuthApiController::class, 'register']);
 Route::post('/auth/logout', [AuthApiController::class, 'logout'])->middleware('auth:sanctum');
 
 //Roles Routes
-Route::apiResource('roles', RoleApiController::class)->middleware('auth:sanctum');;
+Route::apiResource('roles', RoleApiController::class)->middleware('auth:sanctum');
+
+//Settings Routes
+Route::prefix('settings')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('/', [SettingsApiController::class, 'all']);
+    Route::put('/', [SettingsApiController::class, 'update']);
+    Route::get('/{key}', [SettingsApiController::class, 'get']);
+});
