@@ -73,15 +73,17 @@ class SettingService
 
     private function prepareRoles(mixed $value): array
     {
-        $roles = Role::all();
-
-        return $roles->map(function ($role) use ($value) {
-            return [
-                'id' => $role->id,
-                'name' => $role->name,
-                'selected' => in_array($role->id, (array) $value),
-            ];
-        })->toArray();
+        return Role::query()
+            ->where('slug', '!=', 'super_admin')
+            ->get()
+            ->map(function ($role) use ($value) {
+                return [
+                    'id' => $role->id,
+                    'name' => $role->name,
+                    'selected' => in_array($role->id, (array) $value),
+                ];
+            })
+            ->toArray();
     }
 
     public function clearSettingsCache(): void
