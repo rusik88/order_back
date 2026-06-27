@@ -178,16 +178,21 @@ class RoleApiController extends AbstractApiController
     public function store(StoreRoleRequest $request): JsonResponse
     {
         try {
-            $role = Role::create([
-                    "name" => $request->name,
-                    "slug" => $request->slug,
-                    "permissions" => json_encode($request->permissions)
-                ]
-            );
+            if($request->slug !== 'super_admin') {
+                $role = Role::create([
+                        "name" => $request->name,
+                        "slug" => $request->slug,
+                        "permissions" => json_encode($request->permissions)
+                    ]
+                );
+                return $this->success([
+                    'role' => $role,
+                ], 'Role created successfully', Response::HTTP_CREATED);
+            } else {
+                return $this->error('Forbidden create SuperAdmin', Response::HTTP_FORBIDDEN);
+            }
 
-            return $this->success([
-                'role' => $role,
-            ], 'Role created successfully', Response::HTTP_CREATED);
+
         } catch(\Exception $err) {
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -276,15 +281,19 @@ class RoleApiController extends AbstractApiController
                 return $this->error('Role not found', Response::HTTP_NOT_FOUND);
             }
 
-            $role->update([
-                "name" => $request->name,
-                "slug" => $request->slug,
-                "permissions" => json_encode($request->permissions)
-            ]);
+            if($role->slug !== 'super_admin') {
+                $role->update([
+                    "name" => $request->name,
+                    "slug" => $request->slug,
+                    "permissions" => json_encode($request->permissions)
+                ]);
 
-            return $this->success([
-                'role' => $role,
-            ], 'Role updated successfully');
+                return $this->success([
+                    'role' => $role,
+                ], 'Role updated successfully');
+            } else {
+                return $this->error('Forbidden update SuperAdmin', Response::HTTP_FORBIDDEN);
+            }
 
         } catch(\Exception $err) {
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -320,15 +329,22 @@ class RoleApiController extends AbstractApiController
                 return $this->error('Role not found', Response::HTTP_NOT_FOUND);
             }
 
-            $role->delete();
+            if($role->slug !== 'super_admin') {
+                $role->delete();
+
+                return $this->success(
+                    [],
+                    'Role deleted successfully'
+                );
+            } else {
+                return $this->error('Forbidden delete SuperAdmin', Response::HTTP_FORBIDDEN);
+            }
+
 
         } catch(\Exception $err) {
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return $this->success(
-            [],
-            'Role deleted successfully'
-        );
+
     }
 }
