@@ -100,8 +100,10 @@ class SettingsApiController extends AbstractApiController
                                     type: "array",
                                     items: new OA\Items(
                                         properties: [
+                                            new OA\Property(property: "title", type: "string"),
                                             new OA\Property(property: "key", type: "string"),
-                                            new OA\Property(property: "value", type: "string")
+                                            new OA\Property(property: "value", type: "string"),
+                                            new OA\Property(property: "type", type: "string"),
                                         ]
                                     )
                                 )
@@ -150,7 +152,7 @@ class SettingsApiController extends AbstractApiController
                                 ),
                                 new OA\Property(
                                     property: "value",
-                                    type: "string",
+                                    type: "number",
                                     example: "3600"
                                 )
                             ],

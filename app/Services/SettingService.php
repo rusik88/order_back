@@ -49,14 +49,15 @@ class SettingService
     {
         return Cache::rememberForever(self::CACHE_PREFIX . 'all', function () {
             return Setting::all()
-                ->mapWithKeys(function ($item) {
+                ->map(function ($item) {
                     return [
-                        $item->key => [
-                            'title' => $item->title,
-                            'value' => $this->prepareValue($item->value, $item->type)
-                        ],
+                        'title' => $item->title,
+                        'type' => $item->type,
+                        'key' => $item->key,
+                        'value' => $this->prepareValue($item->value, $item->type)
                     ];
                 })
+                ->values()
                 ->toArray();
         });
     }
