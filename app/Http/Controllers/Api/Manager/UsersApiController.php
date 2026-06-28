@@ -119,7 +119,7 @@ class UsersApiController extends AbstractApiController
             ->paginate($perPage);
 
         return $this->success([
-            'roles' => $users->items(),
+            'users' => $users->items(),
             'paginate' => [
                 'current_page' => $users->currentPage(),
                 'from' => $users->firstItem(),
