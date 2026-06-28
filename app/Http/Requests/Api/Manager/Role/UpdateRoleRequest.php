@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Api;
+namespace App\Http\Requests\Api\Manager\Role;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class LoginRequest extends FormRequest
+class UpdateRoleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +24,9 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-            'device' => 'required|string',
+            'name'          => ['required', 'string', 'max:255'],
+            'slug'          => ['required', 'string', 'max:255', Rule::unique('roles', 'slug')->ignore($this->role)],
+            'permissions'   => ['array']
         ];
     }
 }

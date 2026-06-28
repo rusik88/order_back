@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Api\Manager;
 
 use App\Http\Controllers\Api\AbstractApiController;
-use App\Http\Requests\Setting\UpdateSettingRequest;
+use App\Http\Requests\Api\Manager\Setting\UpdateSettingRequest;
 use App\Services\SettingService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;

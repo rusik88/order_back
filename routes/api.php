@@ -3,13 +3,14 @@
 use App\Http\Controllers\Api\Auth\AuthApiController;
 use App\Http\Controllers\Api\Manager\RoleApiController;
 use App\Http\Controllers\Api\Manager\SettingsApiController;
+use App\Http\Controllers\Api\Manager\UsersApiController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/users', [UserController::class, 'getList'])->middleware([
+/*Route::post('/users', [UserController::class, 'getList'])->middleware([
     'auth:sanctum',
     'ability:user:show'
-]);
+]);*/
 
 //Auth Tokens
 Route::post('/auth/login', [AuthApiController::class, 'login']);
@@ -19,6 +20,9 @@ Route::post('/auth/logout', [AuthApiController::class, 'logout'])->middleware('a
 
 //Roles Routes
 Route::apiResource('roles', RoleApiController::class)->middleware('auth:sanctum');
+
+//Users Routes
+Route::apiResource('users', UsersApiController::class)->middleware('auth:sanctum');
 
 //Settings Routes
 Route::prefix('settings')->middleware(['auth:sanctum'])->group(function () {

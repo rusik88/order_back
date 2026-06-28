@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Setting;
+namespace App\Http\Requests\Api\Auth;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
-class UpdateSettingRequest extends FormRequest
+class RegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,7 +24,10 @@ class UpdateSettingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'settings' => ['required', 'array']
+            'email'     => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'name'      => ['required', 'string', 'max:255'],
+            'password'  => ['required', 'string', 'min:8', 'confirmed', Password::defaults()],
+            'device'    => ['required', 'string'],
         ];
     }
 }

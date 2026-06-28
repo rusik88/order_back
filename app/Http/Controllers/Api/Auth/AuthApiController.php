@@ -2,8 +2,8 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Api\AbstractApiController;
-use App\Http\Requests\Api\LoginRequest;
-use App\Http\Requests\Api\RegisterRequest;
+use App\Http\Requests\Api\Auth\LoginRequest;
+use App\Http\Requests\Api\Auth\RegisterRequest;
 use App\Models\User;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;

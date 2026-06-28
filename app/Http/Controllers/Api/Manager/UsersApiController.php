@@ -3,26 +3,27 @@
 namespace App\Http\Controllers\Api\Manager;
 
 use App\Http\Controllers\Api\AbstractApiController;
-use App\Http\Requests\Api\Manager\Role\StoreRoleRequest;
-use App\Http\Requests\Api\Manager\Role\UpdateRoleRequest;
+use App\Http\Requests\Api\Manager\User\StoreUserRequest;
+use App\Http\Requests\Api\Manager\User\UpdateUserRequest;
 use App\Models\Role;
+use App\Models\User;
 use App\Traits\ApiResponseTrait;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 use OpenApi\Attributes as OA;
 
-class RoleApiController extends AbstractApiController
+class UsersApiController extends AbstractApiController
 {
     use ApiResponseTrait;
 
     #[OA\Get(
-        path: "/api/roles",
-        summary: "Get paginated roles list",
+        path: "/api/users",
+        summary: "Get paginated users list",
         security: [
             ["bearerAuth" => []]
         ],
-        tags: ["Roles"],
+        tags: ["Users"],
         parameters: [
             new OA\Parameter(
                 name: "page",
@@ -37,7 +38,7 @@ class RoleApiController extends AbstractApiController
                 schema: new OA\Schema(type: "integer", example: 10)
             ),
             new OA\Parameter(
-                name: "name",
+                name: "email",
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "string", example: 'Admin')
@@ -58,7 +59,7 @@ class RoleApiController extends AbstractApiController
         responses: [
             new OA\Response(
                 response: 200,
-                description: "Roles list",
+                description: "Users list",
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(property: "success", type: "boolean", example: true),
@@ -66,13 +67,17 @@ class RoleApiController extends AbstractApiController
                             property: "data",
                             properties: [
                                 new OA\Property(
-                                    property: "roles",
+                                    property: "users",
                                     type: "array",
                                     items: new OA\Items(
                                         properties: [
                                             new OA\Property(property: "id", type: "integer"),
+                                            new OA\Property(property: "role_id", type: "integer"),
                                             new OA\Property(property: "name", type: "string"),
-                                            new OA\Property(property: "slug", type: "string"),
+                                            new OA\Property(property: "email", type: "string"),
+                                            new OA\Property(property: "email_verified_at", type: "string"),
+                                            new OA\Property(property: "created_at", type: "string"),
+                                            new OA\Property(property: "updated_at", type: "string"),
                                         ]
                                     )
                                 ),
@@ -96,59 +101,56 @@ class RoleApiController extends AbstractApiController
             )
         ]
     )]
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         $perPage = (int) $request->query('per_page', 10);
-        $filter_name = $request->query('name');
+        $filter_name = $request->query('email');
 
         $sortField = $request->query('sort_field', 'name');
         $sortDirection = $request->query('sort_direction', 'asc');
 
-        $roles = Role::query()
-            ->when($filter_name, function ($query, $name) {
-                $query->where('name', 'like', "%{$name}%");
+        $users = User::query()
+            ->when($filter_name, function ($query, $email) {
+                $query->where('email', 'like', "%{$email}%");
             })
-            ->when(in_array($sortField, ['name', 'slug', 'id']), function ($query) use ($sortField, $sortDirection) {
+            ->when(in_array($sortField, ['name', 'email', 'id']), function ($query) use ($sortField, $sortDirection) {
                 $query->orderBy($sortField, $sortDirection === 'desc' ? 'desc' : 'asc');
             })
             ->paginate($perPage);
 
         return $this->success([
-            'roles' => $roles->items(),
+            'roles' => $users->items(),
             'paginate' => [
-                'current_page' => $roles->currentPage(),
-                'from' => $roles->firstItem(),
-                'last_page' => $roles->lastPage(),
-                'per_page' => $roles->perPage(),
-                'to' => $roles->lastItem(),
-                'total' => $roles->total()
+                'current_page' => $users->currentPage(),
+                'from' => $users->firstItem(),
+                'last_page' => $users->lastPage(),
+                'per_page' => $users->perPage(),
+                'to' => $users->lastItem(),
+                'total' => $users->total()
             ]
         ], 200);
     }
 
     #[OA\Post(
-        path: "/api/roles",
-        summary: "Create role",
+        path: "/api/users",
+        summary: "Create user",
         security: [
             ["bearerAuth" => []]
         ],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ["name", "slug"],
+                required: ["name", "email", "role_id"],
                 properties: [
                     new OA\Property(property: "name", type: "string", example: "Administrator"),
-                    new OA\Property(property: "slug", type: "string", example: "admin"),
-                    new OA\Property(
-                        property: "permissions",
-                        type: "array",
-                        items: new OA\Items(type: "string"),
-                        example: ["users.view", "users.create"]
-                    )
+                    new OA\Property(property: "email", type: "string", example: "admin"),
+                    new OA\Property(property: "role_id", type: "number", example: 3),
+                    new OA\Property(property: "password", type: "string", example: "password"),
+                    new OA\Property(property: "password_confirmation", type: "string", example: "password")
                 ]
             )
         ),
-        tags: ["Roles"],
+        tags: ["Users"],
         responses: [
             new OA\Response(
                 response: 201,
@@ -161,11 +163,15 @@ class RoleApiController extends AbstractApiController
                             property: "data",
                             properties: [
                                 new OA\Property(
-                                    property: "role",
+                                    property: "user",
                                     properties: [
                                         new OA\Property(property: "id", type: "integer"),
+                                        new OA\Property(property: "role_id", type: "integer"),
                                         new OA\Property(property: "name", type: "string"),
-                                        new OA\Property(property: "slug", type: "string"),
+                                        new OA\Property(property: "email", type: "string"),
+                                        new OA\Property(property: "email_verified_at", type: "string"),
+                                        new OA\Property(property: "created_at", type: "string"),
+                                        new OA\Property(property: "updated_at", type: "string"),
                                     ],
                                     type: "object"
                                 )
@@ -176,23 +182,32 @@ class RoleApiController extends AbstractApiController
             )
         ]
     )]
-    public function store(StoreRoleRequest $request): JsonResponse
+    public function store(StoreUserRequest $request)
     {
         try {
-            if($request->slug !== 'super_admin') {
-                $role = Role::create([
-                        "name" => $request->name,
-                        "slug" => $request->slug,
-                        "permissions" => json_encode($request->permissions)
-                    ]
-                );
-                return $this->success([
-                    'role' => $role,
-                ], 'Role created successfully', Response::HTTP_CREATED);
-            } else {
-                return $this->error('Forbidden create SuperAdmin', Response::HTTP_FORBIDDEN);
+            $role = Role::find($request->role_id);
+            if (!$role) {
+                return $this->error('Role not found', Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            if ($role->slug === 'super_admin') {
+                return $this->error('Not created Super Admin', Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
+            try {
+                $user = User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'role_id' => $role->id,
+                    'password' => Hash::make($request->password),
+                ]);
+
+                return $this->success([
+                    'user' => $user,
+                ], "", Response::HTTP_CREATED);
+
+            } catch(\Exception $err) {
+                return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
 
         } catch(\Exception $err) {
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -200,12 +215,12 @@ class RoleApiController extends AbstractApiController
     }
 
     #[OA\Get(
-        path: "/api/roles/{id}",
-        summary: "Get role by id",
+        path: "/api/users/{id}",
+        summary: "Get user by id",
         security: [
             ["bearerAuth" => []]
         ],
-        tags: ["Roles"],
+        tags: ["Users"],
         parameters: [
             new OA\Parameter(
                 name: "id",
@@ -217,30 +232,30 @@ class RoleApiController extends AbstractApiController
         responses: [
             new OA\Response(
                 response: 200,
-                description: "Role found",
+                description: "User found",
             ),
             new OA\Response(
                 response: 404,
-                description: "Role not found"
+                description: "User not found"
             )
         ]
     )]
-    public function show(string $id): JsonResponse
+    public function show(string $id)
     {
-        $role = Role::find($id);
+        $user = User::find($id);
 
-        if (!$role) {
-            return $this->error('Role not found', Response::HTTP_NOT_FOUND);
+        if (!$user) {
+            return $this->error('User not found', Response::HTTP_NOT_FOUND);
         }
 
         return $this->success([
-            'role' => $role,
+            'user' => $user,
         ]);
     }
 
     #[OA\Patch(
-        path: "/api/roles/{id}",
-        summary: "Update role",
+        path: "/api/users/{id}",
+        summary: "Update user",
         security: [
             ["bearerAuth" => []]
         ],
@@ -248,18 +263,15 @@ class RoleApiController extends AbstractApiController
             required: true,
             content: new OA\JsonContent(
                 properties: [
-                    new OA\Property(property: "name", type: "string", example: "Admin"),
-                    new OA\Property(property: "slug", type: "string", example: "admin"),
-                    new OA\Property(
-                        property: "permissions",
-                        type: "array",
-                        items: new OA\Items(type: "string"),
-                        example: ["users.view"]
-                    )
+                    new OA\Property(property: "name", type: "string", example: "Administrator"),
+                    new OA\Property(property: "email", type: "string", example: "admin"),
+                    new OA\Property(property: "role_id", type: "number", example: 3),
+                    new OA\Property(property: "password", type: "string", example: "password"),
+                    new OA\Property(property: "password_confirmation", type: "string", example: "password")
                 ]
             )
         ),
-        tags: ["Roles"],
+        tags: ["Users"],
         parameters: [
             new OA\Parameter(
                 name: "id",
@@ -273,27 +285,33 @@ class RoleApiController extends AbstractApiController
             new OA\Response(response: 404, description: "Not found")
         ]
     )]
-    public function update(UpdateRoleRequest $request, string $id): JsonResponse
+    public function update(UpdateUserRequest  $request, string $id)
     {
         try {
-            $role = Role::find($id);
+            $user = User::find($id);
 
-            if (!$role) {
-                return $this->error('Role not found', Response::HTTP_NOT_FOUND);
+            if (!$user) {
+                return $this->error('User not found', Response::HTTP_NOT_FOUND);
             }
 
-            if($role->slug !== 'super_admin') {
-                $role->update([
+            if($user->role !== null && $user->role->slug !== 'super_admin') {
+                $user_data = [
                     "name" => $request->name,
-                    "slug" => $request->slug,
-                    "permissions" => json_encode($request->permissions)
-                ]);
+                    "email" => $request->email,
+                    "role_id" => $request->role_id,
+                ];
+
+                if ($request->filled('password')) {
+                    $user_data['password'] = Hash::make($request->password);
+                }
+
+                $user->update($user_data);
 
                 return $this->success([
-                    'role' => $role,
-                ], 'Role updated successfully');
+                    'user' => $user,
+                ], 'User updated successfully');
             } else {
-                return $this->error('Forbidden update SuperAdmin', Response::HTTP_FORBIDDEN);
+                return $this->error('Forbidden update user SuperAdmin', Response::HTTP_FORBIDDEN);
             }
 
         } catch(\Exception $err) {
@@ -302,12 +320,12 @@ class RoleApiController extends AbstractApiController
     }
 
     #[OA\Delete(
-        path: "/api/roles/{id}",
-        summary: "Delete role",
+        path: "/api/users/{id}",
+        summary: "Delete user",
         security: [
             ["bearerAuth" => []]
         ],
-        tags: ["Roles"],
+        tags: ["Users"],
         parameters: [
             new OA\Parameter(
                 name: "id",
@@ -321,31 +339,36 @@ class RoleApiController extends AbstractApiController
             new OA\Response(response: 404, description: "Not found")
         ]
     )]
-    public function destroy(string $id): JsonResponse
+    public function destroy(string $id)
     {
         try {
-            $role = Role::find($id);
+            $user = User::find($id);
 
-            if (!$role) {
-                return $this->error('Role not found', Response::HTTP_NOT_FOUND);
+            if (!$user) {
+                return $this->error('User not found', Response::HTTP_NOT_FOUND);
             }
 
-            if($role->slug !== 'super_admin') {
-                $role->delete();
-
-                return $this->success(
-                    [],
-                    'Role deleted successfully'
-                );
+            if($user->role !== null) {
+                if($user->role->slug !== 'super_admin') {
+                    return $this->deleteUser($user);
+                } else {
+                    return $this->error('Forbidden delete SuperAdmin', Response::HTTP_FORBIDDEN);
+                }
             } else {
-                return $this->error('Forbidden delete SuperAdmin', Response::HTTP_FORBIDDEN);
+                return $this->deleteUser($user);
             }
-
 
         } catch(\Exception $err) {
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
 
+    private function deleteUser(User $user) {
+        $user->delete();
 
+        return $this->success(
+            [],
+            'User deleted successfully'
+        );
     }
 }
