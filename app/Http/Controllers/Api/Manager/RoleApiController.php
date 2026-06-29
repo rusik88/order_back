@@ -104,24 +104,25 @@ class RoleApiController extends AbstractApiController
         $sortField = $request->query('sort_field', 'name');
         $sortDirection = $request->query('sort_direction', 'asc');
 
-        $roles = Role::query()
+        $query = Role::query()
             ->when($filter_name, function ($query, $name) {
                 $query->where('name', 'like', "%{$name}%");
             })
             ->when(in_array($sortField, ['name', 'slug', 'id']), function ($query) use ($sortField, $sortDirection) {
                 $query->orderBy($sortField, $sortDirection === 'desc' ? 'desc' : 'asc');
-            })
-            ->paginate($perPage);
+            });
+
+        $roles = $perPage === -1 ? $query->get() : $query->paginate($perPage);
 
         return $this->success([
-            'roles' => $roles->items(),
+            'roles' => $perPage !== -1 ? $roles->items() : $roles,
             'paginate' => [
-                'current_page' => $roles->currentPage(),
-                'from' => $roles->firstItem(),
-                'last_page' => $roles->lastPage(),
-                'per_page' => $roles->perPage(),
-                'to' => $roles->lastItem(),
-                'total' => $roles->total()
+                'current_page' => $perPage !== -1 ? $roles->currentPage() : 1,
+                'from' => $perPage !== -1 ? $roles->firstItem() : 1,
+                'last_page' => $perPage !== -1 ? $roles->lastPage() : 1,
+                'per_page' => $perPage !== -1 ? $roles->perPage() : -1,
+                'to' => $perPage !== -1 ? $roles->lastItem() : count($roles),
+                'total' => $perPage !== -1 ? $roles->total() : count($roles)
             ]
         ], 200);
     }
