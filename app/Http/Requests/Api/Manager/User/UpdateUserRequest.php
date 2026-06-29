@@ -25,7 +25,7 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'     => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->route('id')),],
+            'email'     => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->route('user'))],
             'name'      => ['required', 'string', 'max:255'],
             'role_id'   => ['required', 'integer', 'exists:roles,id'],
             'password'  => ['nullable', 'string', 'min:8', 'confirmed', Password::defaults()]
