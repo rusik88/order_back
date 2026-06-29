@@ -243,6 +243,7 @@ class UsersApiController extends AbstractApiController
     public function show(string $id)
     {
         $user = User::find($id);
+        $user->load('role');
 
         if (!$user) {
             return $this->error('User not found', Response::HTTP_NOT_FOUND);
