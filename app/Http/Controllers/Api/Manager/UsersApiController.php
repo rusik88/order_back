@@ -116,6 +116,7 @@ class UsersApiController extends AbstractApiController
             ->when(in_array($sortField, ['name', 'email', 'id']), function ($query) use ($sortField, $sortDirection) {
                 $query->orderBy($sortField, $sortDirection === 'desc' ? 'desc' : 'asc');
             })
+            ->with('role')
             ->paginate($perPage);
 
         return $this->success([
