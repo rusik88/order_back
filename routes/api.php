@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\AuthApiController;
+use App\Http\Controllers\Api\Manager\OrderStatusApiController;
 use App\Http\Controllers\Api\Manager\RoleApiController;
 use App\Http\Controllers\Api\Manager\SettingsApiController;
 use App\Http\Controllers\Api\Manager\UsersApiController;
@@ -23,6 +24,9 @@ Route::apiResource('roles', RoleApiController::class)->middleware('auth:sanctum'
 
 //Users Routes
 Route::apiResource('users', UsersApiController::class)->middleware('auth:sanctum');
+
+//Order Statuses
+Route::apiResource('order_statuses', OrderStatusApiController::class)->middleware('auth:sanctum');
 
 //Settings Routes
 Route::prefix('settings')->middleware(['auth:sanctum'])->group(function () {

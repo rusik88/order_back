@@ -3,26 +3,26 @@
 namespace App\Http\Controllers\Api\Manager;
 
 use App\Http\Controllers\Api\AbstractApiController;
-use App\Http\Requests\Api\Manager\Role\StoreRoleRequest;
-use App\Http\Requests\Api\Manager\Role\UpdateRoleRequest;
-use App\Models\Role;
+use App\Http\Requests\Api\Manager\OrderStatus\StoreOrderStatusRequest;
+use App\Http\Requests\Api\Manager\OrderStatus\UpdateOrderStatusRequest;
+use App\Models\OrderStatus;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use OpenApi\Attributes as OA;
 
-class RoleApiController extends AbstractApiController
+class OrderStatusApiController extends AbstractApiController
 {
     use ApiResponseTrait;
 
     #[OA\Get(
-        path: "/api/roles",
-        summary: "Get paginated roles list",
+        path: "/api/order_statuses",
+        summary: "Get paginated Order Statuses list",
         security: [
             ["bearerAuth" => []]
         ],
-        tags: ["Roles"],
+        tags: ["Order Statuses"],
         parameters: [
             new OA\Parameter(
                 name: "page",
@@ -46,7 +46,7 @@ class RoleApiController extends AbstractApiController
                 name: "sort_field",
                 in: "query",
                 required: false,
-                schema: new OA\Schema(type: "string", example: 'name')
+                schema: new OA\Schema(type: "string", example: 'id')
             ),
             new OA\Parameter(
                 name: "sort_direction",
@@ -58,7 +58,7 @@ class RoleApiController extends AbstractApiController
         responses: [
             new OA\Response(
                 response: 200,
-                description: "Roles list",
+                description: "Order Statuses list",
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(property: "success", type: "boolean", example: true),
@@ -66,7 +66,7 @@ class RoleApiController extends AbstractApiController
                             property: "data",
                             properties: [
                                 new OA\Property(
-                                    property: "roles",
+                                    property: "order_statuses",
                                     type: "array",
                                     items: new OA\Items(
                                         properties: [
@@ -104,7 +104,7 @@ class RoleApiController extends AbstractApiController
         $sortField = $request->query('sort_field', 'name');
         $sortDirection = $request->query('sort_direction', 'asc');
 
-        $query = Role::query()
+        $query = OrderStatus::query()
             ->when($filter_name, function ($query, $name) {
                 $query->where('name', 'like', "%{$name}%");
             })
@@ -112,24 +112,24 @@ class RoleApiController extends AbstractApiController
                 $query->orderBy($sortField, $sortDirection === 'desc' ? 'desc' : 'asc');
             });
 
-        $roles = $perPage === -1 ? $query->get() : $query->paginate($perPage);
+        $order_statuses = $perPage === -1 ? $query->get() : $query->paginate($perPage);
 
         return $this->success([
-            'roles' => $perPage !== -1 ? $roles->items() : $roles,
+            'order_statuses' => $perPage !== -1 ? $order_statuses->items() : $order_statuses,
             'paginate' => [
-                'current_page' => $perPage !== -1 ? $roles->currentPage() : 1,
-                'from' => $perPage !== -1 ? $roles->firstItem() : 1,
-                'last_page' => $perPage !== -1 ? $roles->lastPage() : 1,
-                'per_page' => $perPage !== -1 ? $roles->perPage() : -1,
-                'to' => $perPage !== -1 ? $roles->lastItem() : count($roles),
-                'total' => $perPage !== -1 ? $roles->total() : count($roles)
+                'current_page' => $perPage !== -1 ? $order_statuses->currentPage() : 1,
+                'from' => $perPage !== -1 ? $order_statuses->firstItem() : 1,
+                'last_page' => $perPage !== -1 ? $order_statuses->lastPage() : 1,
+                'per_page' => $perPage !== -1 ? $order_statuses->perPage() : -1,
+                'to' => $perPage !== -1 ? $order_statuses->lastItem() : count($order_statuses),
+                'total' => $perPage !== -1 ? $order_statuses->total() : count($order_statuses)
             ]
         ], 200);
     }
 
     #[OA\Post(
-        path: "/api/roles",
-        summary: "Create role",
+        path: "/api/order_statuses",
+        summary: "Create Order Statuses",
         security: [
             ["bearerAuth" => []]
         ],
@@ -149,20 +149,20 @@ class RoleApiController extends AbstractApiController
                 ]
             )
         ),
-        tags: ["Roles"],
+        tags: ["Order Statuses"],
         responses: [
             new OA\Response(
                 response: 201,
-                description: "Role created",
+                description: "Order Status created",
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(property: "success", type: "boolean", example: true),
-                        new OA\Property(property: "message", type: "string", example: "Role created successfully"),
+                        new OA\Property(property: "message", type: "string", example: "Order Status created successfully"),
                         new OA\Property(
                             property: "data",
                             properties: [
                                 new OA\Property(
-                                    property: "role",
+                                    property: "order_statuses",
                                     properties: [
                                         new OA\Property(property: "id", type: "integer"),
                                         new OA\Property(property: "name", type: "string"),
@@ -177,23 +177,17 @@ class RoleApiController extends AbstractApiController
             )
         ]
     )]
-    public function store(StoreRoleRequest $request): JsonResponse
+    public function store(StoreOrderStatusRequest $request): JsonResponse
     {
         try {
-            if($request->slug !== 'super_admin') {
-                $role = Role::create([
-                        "name" => $request->name,
-                        "slug" => $request->slug,
-                        "permissions" => json_encode($request->permissions)
-                    ]
-                );
-                return $this->success([
-                    'role' => $role,
-                ], 'Role created successfully', Response::HTTP_CREATED);
-            } else {
-                return $this->error('Forbidden create SuperAdmin', Response::HTTP_FORBIDDEN);
-            }
-
+            $order_status = OrderStatus::create([
+                    "name" => $request->name,
+                    "slug" => $request->slug
+                ]
+            );
+            return $this->success([
+                'order_status' => $order_status,
+            ], 'Order Status created successfully', Response::HTTP_CREATED);
 
         } catch(\Exception $err) {
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -201,12 +195,12 @@ class RoleApiController extends AbstractApiController
     }
 
     #[OA\Get(
-        path: "/api/roles/{id}",
-        summary: "Get role by id",
+        path: "/api/order_statuses/{id}",
+        summary: "Get Order Status by id",
         security: [
             ["bearerAuth" => []]
         ],
-        tags: ["Roles"],
+        tags: ["Order Statuses"],
         parameters: [
             new OA\Parameter(
                 name: "id",
@@ -218,30 +212,30 @@ class RoleApiController extends AbstractApiController
         responses: [
             new OA\Response(
                 response: 200,
-                description: "Role found",
+                description: "Order Status found",
             ),
             new OA\Response(
                 response: 404,
-                description: "Role not found"
+                description: "Order Status not found"
             )
         ]
     )]
-    public function show(string $id): JsonResponse
+    public function show(string $id)
     {
-        $role = Role::find($id);
+        $order_status = OrderStatus::find($id);
 
-        if (!$role) {
-            return $this->error('Role not found', Response::HTTP_NOT_FOUND);
+        if (!$order_status) {
+            return $this->error('Order Status not found', Response::HTTP_NOT_FOUND);
         }
 
         return $this->success([
-            'role' => $role,
+            'order_status' => $order_status,
         ]);
     }
 
     #[OA\Patch(
-        path: "/api/roles/{id}",
-        summary: "Update role",
+        path: "/api/order_statuses/{id}",
+        summary: "Update Order Status by id",
         security: [
             ["bearerAuth" => []]
         ],
@@ -260,7 +254,7 @@ class RoleApiController extends AbstractApiController
                 ]
             )
         ),
-        tags: ["Roles"],
+        tags: ["Order Statuses"],
         parameters: [
             new OA\Parameter(
                 name: "id",
@@ -274,28 +268,23 @@ class RoleApiController extends AbstractApiController
             new OA\Response(response: 404, description: "Not found")
         ]
     )]
-    public function update(UpdateRoleRequest $request, string $id): JsonResponse
+    public function update(UpdateOrderStatusRequest $request, string $id): JsonResponse
     {
         try {
-            $role = Role::find($id);
+            $order_status = OrderStatus::find($id);
 
-            if (!$role) {
-                return $this->error('Role not found', Response::HTTP_NOT_FOUND);
+            if (!$order_status) {
+                return $this->error('Order Status not found', Response::HTTP_NOT_FOUND);
             }
 
-            if($role->slug !== 'super_admin') {
-                $role->update([
-                    "name" => $request->name,
-                    "slug" => $request->slug,
-                    "permissions" => json_encode($request->permissions)
-                ]);
+            $order_status->update([
+                "name" => $request->name,
+                "slug" => $request->slug
+            ]);
 
-                return $this->success([
-                    'role' => $role,
-                ], 'Role updated successfully');
-            } else {
-                return $this->error('Forbidden update SuperAdmin', Response::HTTP_FORBIDDEN);
-            }
+            return $this->success([
+                'order_status' => $order_status,
+            ], 'Order Status updated successfully');
 
         } catch(\Exception $err) {
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -303,12 +292,12 @@ class RoleApiController extends AbstractApiController
     }
 
     #[OA\Delete(
-        path: "/api/roles/{id}",
-        summary: "Delete role",
+        path: "/api/order_statuses/{id}",
+        summary: "Delete Order Status by id",
         security: [
             ["bearerAuth" => []]
         ],
-        tags: ["Roles"],
+        tags: ["Order Statuses"],
         parameters: [
             new OA\Parameter(
                 name: "id",
@@ -325,28 +314,21 @@ class RoleApiController extends AbstractApiController
     public function destroy(string $id): JsonResponse
     {
         try {
-            $role = Role::find($id);
+            $order_status = OrderStatus::find($id);
 
-            if (!$role) {
-                return $this->error('Role not found', Response::HTTP_NOT_FOUND);
+            if (!$order_status) {
+                return $this->error('Order Status not found', Response::HTTP_NOT_FOUND);
             }
 
-            if($role->slug !== 'super_admin') {
-                $role->delete();
+            $order_status->delete();
 
-                return $this->success(
-                    [],
-                    'Role deleted successfully'
-                );
-            } else {
-                return $this->error('Forbidden delete SuperAdmin', Response::HTTP_FORBIDDEN);
-            }
-
+            return $this->success(
+                [],
+                'Order Status deleted successfully'
+            );
 
         } catch(\Exception $err) {
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-
     }
 }
