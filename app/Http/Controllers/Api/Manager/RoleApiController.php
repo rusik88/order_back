@@ -108,7 +108,7 @@ class RoleApiController extends AbstractApiController
             ->when($filter_name, function ($query, $name) {
                 $query->where('name', 'like', "%{$name}%");
             })
-            ->when(in_array($sortField, ['name', 'slug', 'id']), function ($query) use ($sortField, $sortDirection) {
+            ->when(in_array($sortField, ['name', 'slug', 'id', 'created_at']), function ($query) use ($sortField, $sortDirection) {
                 $query->orderBy($sortField, $sortDirection === 'desc' ? 'desc' : 'asc');
             });
 

@@ -110,12 +110,22 @@ class UsersApiController extends AbstractApiController
         $sortDirection = $request->query('sort_direction', 'asc');
 
         $users = User::query()
+            ->leftJoin('roles', 'roles.id', '=', 'users.role_id')
+            ->select('users.*')
             ->when($filter_name, function ($query, $email) {
-                $query->where('email', 'like', "%{$email}%");
+                $query->where('users.email', 'like', "%{$email}%");
             })
-            ->when(in_array($sortField, ['name', 'email', 'id']), function ($query) use ($sortField, $sortDirection) {
-                $query->orderBy($sortField, $sortDirection === 'desc' ? 'desc' : 'asc');
-            })
+            ->when(
+                in_array($sortField, ['name', 'email', 'id', 'created_at', 'role_name']),
+                function ($query) use ($sortField, $sortDirection) {
+
+                    if ($sortField === 'role_name') {
+                        $query->orderBy('roles.name', $sortDirection);
+                    } else {
+                        $query->orderBy("users.$sortField", $sortDirection);
+                    }
+                }
+            )
             ->with('role')
             ->paginate($perPage);
 

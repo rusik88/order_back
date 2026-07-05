@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AbstractApiController;
 use App\Http\Requests\Api\Auth\LoginRequest;
 use App\Http\Requests\Api\Auth\RegisterRequest;
 use App\Models\User;
+use App\Services\SettingService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -69,6 +70,7 @@ class AuthApiController extends AbstractApiController {
     public function login(LoginRequest $request): JsonResponse {
 
         $user =  User::where('email', $request->email)->first();
+        $user->load('role');
 
         try {
             if(!$user || !Hash::check($request->password, $user->password)) {
@@ -79,7 +81,7 @@ class AuthApiController extends AbstractApiController {
 
             return $this->success([
                 'user' => $user,
-                'auth_token' => $user->createToken($request->device, ["user:show"])->plainTextToken
+                'auth_token' => $user->createToken($request->device, json_decode($user->role->permissions, true))->plainTextToken
             ], "", 200);
 
         } catch(\Exception $err) {
