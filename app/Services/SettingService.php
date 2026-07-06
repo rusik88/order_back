@@ -1,73 +1,61 @@
 <?php
+
 namespace App\Services;
 
-use App\Models\Setting;
 use App\Models\Role;
-use Illuminate\Support\Facades\Cache;
+use App\Models\Setting;
 
 class SettingService
 {
-    private const CACHE_PREFIX = 'settings.';
-
     public function get(string $key, mixed $default = null): mixed
     {
-        return Cache::rememberForever($this->cacheKey($key), function () use ($key, $default) {
-            $setting = Setting::where('key', $key)->first();
+        $setting = Setting::where('key', $key)->first();
 
-            if (!$setting) {
-                return $default;
-            }
-
-            return $setting->value;
-        });
+        return $setting?->value ?? $default;
     }
 
     public function set(string $key, mixed $value): void
     {
         Setting::updateOrCreate(
             ['key' => $key],
-            [
-                'value' => $value
-            ]
+            ['value' => $value]
         );
-
-        Cache::forget($this->cacheKey($key));
     }
 
     public function setAll(array $settings): void
     {
-        if(!empty($settings)) {
-            foreach ($settings as $setting) {
-                $this->set($setting['key'], $setting['value']);
-            }
-
-            Cache::forget(self::CACHE_PREFIX . 'all');
+        foreach ($settings as $setting) {
+            $this->set(
+                $setting['key'],
+                $setting['value']
+            );
         }
     }
 
     public function all(): array
     {
-        return Cache::rememberForever(self::CACHE_PREFIX . 'all', function () {
-            return Setting::all()
-                ->map(function ($item) {
-                    return [
-                        'title' => $item->title,
-                        'type' => $item->type,
-                        'key' => $item->key,
-                        'value' => $this->prepareValue($item->value, $item->type)
-                    ];
-                })
-                ->values()
-                ->toArray();
-        });
+        return Setting::all()
+            ->map(function ($item) {
+                return [
+                    'title' => $item->title,
+                    'type'  => $item->type,
+                    'key'   => $item->key,
+                    'value' => $this->prepareValue(
+                        $item->value,
+                        $item->type
+                    ),
+                ];
+            })
+            ->values()
+            ->toArray();
     }
 
     private function prepareValue(mixed $value, string $type = ''): mixed
     {
         return match ($type) {
             'number' => (int) $value,
-            'role' => $this->prepareRoles($value),
-            default => (string) $value,
+            'role'   => $this->prepareRoles($value),
+            default  => (string) $value,
         };
     }
 
@@ -78,21 +66,11 @@ class SettingService
             ->get()
             ->map(function ($role) use ($value) {
                 return [
-                    'id' => $role->id,
-                    'name' => $role->name,
-                    'selected' => in_array($role->id, (array) $value),
+                    'id'       => $role->id,
+                    'name'     => $role->name,
+                    'selected' => ($role->id == $value),
                 ];
             })
             ->toArray();
-    }
-
-    public function clearSettingsCache(): void
-    {
-        Cache::forget(self::CACHE_PREFIX . 'all');
-    }
-
-    private function cacheKey(string $key): string
-    {
-        return self::CACHE_PREFIX . $key;
     }
 }
