@@ -98,6 +98,12 @@ class OrderStatusApiController extends AbstractApiController
     )]
     public function index(Request $request): JsonResponse
     {
+        if($this->hasAccess($request, 'order_status:read')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
         $perPage = (int) $request->query('per_page', 10);
         $filter_name = $request->query('name');
 
@@ -179,6 +185,12 @@ class OrderStatusApiController extends AbstractApiController
     )]
     public function store(StoreOrderStatusRequest $request): JsonResponse
     {
+        if($this->hasAccess($request, 'order_status:create')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
         try {
             $order_status = OrderStatus::create([
                     "name" => $request->name,
@@ -220,8 +232,14 @@ class OrderStatusApiController extends AbstractApiController
             )
         ]
     )]
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
+        if($this->hasAccess($request, 'order_status:read')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
         $order_status = OrderStatus::find($id);
 
         if (!$order_status) {
@@ -270,6 +288,12 @@ class OrderStatusApiController extends AbstractApiController
     )]
     public function update(UpdateOrderStatusRequest $request, string $id): JsonResponse
     {
+        if($this->hasAccess($request, 'order_status:update')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
         try {
             $order_status = OrderStatus::find($id);
 
@@ -311,8 +335,14 @@ class OrderStatusApiController extends AbstractApiController
             new OA\Response(response: 404, description: "Not found")
         ]
     )]
-    public function destroy(string $id): JsonResponse
+    public function destroy(Request $request, string $id): JsonResponse
     {
+        if($this->hasAccess($request, 'order_status:delete')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
         try {
             $order_status = OrderStatus::find($id);
 

@@ -6,6 +6,7 @@ use App\Http\Requests\Api\Manager\Setting\UpdateSettingRequest;
 use App\Services\SettingService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use OpenApi\Attributes as OA;
 
@@ -63,8 +64,15 @@ class SettingsApiController extends AbstractApiController
             )
         ]
     )]
-    public function get(string $key): JsonResponse
+    public function get(Request $request, string $key): JsonResponse
     {
+        if($this->hasAccess($request, 'setting:read')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
+
         $setting = $this->settingService->get($key);
 
         if(!$setting) return $this->error('Setting not found', Response::HTTP_NOT_FOUND);
@@ -119,8 +127,16 @@ class SettingsApiController extends AbstractApiController
             )
         ]
     )]
-    public function all(): JsonResponse
+    public function all(Request $request): JsonResponse
     {
+
+        if($this->hasAccess($request, 'setting:read')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
+
         $settings = $this->settingService->all();
 
         if(!$settings) return $this->error('Settings not found', Response::HTTP_NOT_FOUND);
@@ -190,6 +206,13 @@ class SettingsApiController extends AbstractApiController
     )]
     public function update(UpdateSettingRequest $request): JsonResponse
     {
+        if($this->hasAccess($request, 'setting:update')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
+
         try {
             $settings = $request->settings;
             if(!empty($settings)) {

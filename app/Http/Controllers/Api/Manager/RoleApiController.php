@@ -98,6 +98,12 @@ class RoleApiController extends AbstractApiController
     )]
     public function index(Request $request): JsonResponse
     {
+        if($this->hasAccess($request, 'role:read')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
         $perPage = (int) $request->query('per_page', 10);
         $filter_name = $request->query('name');
 
@@ -179,6 +185,13 @@ class RoleApiController extends AbstractApiController
     )]
     public function store(StoreRoleRequest $request): JsonResponse
     {
+        if($this->hasAccess($request, 'role:create')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
+
         try {
             if($request->slug !== 'super_admin') {
                 $role = Role::create([
@@ -226,8 +239,14 @@ class RoleApiController extends AbstractApiController
             )
         ]
     )]
-    public function show(string $id): JsonResponse
+    public function show(Request $request, string $id): JsonResponse
     {
+        if($this->hasAccess($request, 'role:read')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
         $role = Role::find($id);
 
         if (!$role) {
@@ -276,6 +295,13 @@ class RoleApiController extends AbstractApiController
     )]
     public function update(UpdateRoleRequest $request, string $id): JsonResponse
     {
+        if($this->hasAccess($request, 'role:update')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
+
         try {
             $role = Role::find($id);
 
@@ -322,8 +348,15 @@ class RoleApiController extends AbstractApiController
             new OA\Response(response: 404, description: "Not found")
         ]
     )]
-    public function destroy(string $id): JsonResponse
+    public function destroy(Request $request, string $id): JsonResponse
     {
+        if($this->hasAccess($request, 'role:delete')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
+
         try {
             $role = Role::find($id);
 

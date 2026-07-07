@@ -1,6 +1,7 @@
 <?php
 namespace App\Traits;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 trait ApiResponseTrait
@@ -11,10 +12,9 @@ trait ApiResponseTrait
      * @param mixed $data
      * @param string $message
      * @param int $code
-     * @param array $meta
      * @return JsonResponse
      */
-    public function success($data = [], $message = '', $code = 200): JsonResponse
+    public function success(array $data = [], string $message = '', int $code = 200): JsonResponse
     {
         return response()->json([
             'success' => true,
@@ -28,16 +28,26 @@ trait ApiResponseTrait
      *
      * @param string $message
      * @param int $code
-     * @param array $errors
-     * @param mixed $debug (optional debug info for dev)
      * @return JsonResponse
      */
-    public function error($message = '', $code = 400,): JsonResponse
+    public function error(string $message = '', int $code = 400,): JsonResponse
     {
         return response()->json([
             'success' => false,
             'message' => $message,
             'data'    => []
         ], $code);
+    }
+
+    /**
+     * Check on access ability
+     *
+     * @param Request $request
+     * @param string $ability
+     * @return bool
+     */
+    public function hasAccess(Request $request, string $ability): bool
+    {
+        return !$request->user()->tokenCan($ability);
     }
 }

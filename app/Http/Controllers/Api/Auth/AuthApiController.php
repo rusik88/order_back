@@ -69,7 +69,6 @@ class AuthApiController extends AbstractApiController {
     public function login(LoginRequest $request): JsonResponse {
 
         $user =  User::where('email', $request->email)->first();
-        $user->load('role');
 
         try {
             if(!$user || !Hash::check($request->password, $user->password)) {
@@ -77,6 +76,8 @@ class AuthApiController extends AbstractApiController {
                     'email' => ['The provided credentials are incorrect.'],
                 ]);
             }
+
+            $user->load('role');
 
             return $this->success([
                 'user' => $user,

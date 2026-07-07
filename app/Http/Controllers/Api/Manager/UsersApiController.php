@@ -103,6 +103,13 @@ class UsersApiController extends AbstractApiController
     )]
     public function index(Request $request)
     {
+        if($this->hasAccess($request, 'user:read')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
+
         $perPage = (int) $request->query('per_page', 10);
         $filter_name = $request->query('email');
 
@@ -195,6 +202,12 @@ class UsersApiController extends AbstractApiController
     )]
     public function store(StoreUserRequest $request)
     {
+        if($this->hasAccess($request, 'user:create')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
         try {
             $role = Role::find($request->role_id);
             if (!$role) {
@@ -251,8 +264,15 @@ class UsersApiController extends AbstractApiController
             )
         ]
     )]
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
+        if($this->hasAccess($request, 'user:read')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
+
         $user = User::find($id);
         $user->load('role');
 
@@ -299,6 +319,13 @@ class UsersApiController extends AbstractApiController
     )]
     public function update(UpdateUserRequest  $request, string $id)
     {
+        if($this->hasAccess($request, 'user:update')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
+
         try {
             $user = User::find($id);
 
@@ -351,8 +378,14 @@ class UsersApiController extends AbstractApiController
             new OA\Response(response: 404, description: "Not found")
         ]
     )]
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
+        if($this->hasAccess($request, 'user:delete')) {
+            return $this->error(
+                'Access denied.',
+                403
+            );
+        }
         try {
             $user = User::find($id);
 
