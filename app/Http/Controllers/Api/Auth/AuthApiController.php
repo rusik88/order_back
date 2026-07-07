@@ -66,7 +66,6 @@ class AuthApiController extends AbstractApiController {
             )
         ]
     )]
-
     public function login(LoginRequest $request): JsonResponse {
 
         $user =  User::where('email', $request->email)->first();
@@ -187,7 +186,7 @@ class AuthApiController extends AbstractApiController {
     )]
     public function me(Request $request): JsonResponse {
         return $this->success([
-            $request->user()
+            "user" => $request->user()->load('role')
         ], "");
     }
 
