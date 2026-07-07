@@ -103,7 +103,7 @@ class UsersApiController extends AbstractApiController
     )]
     public function index(Request $request)
     {
-        if($this->hasAccess($request, 'user:read')) {
+        if(!$this->hasAccess($request, 'user:read')) {
             return $this->error(
                 'Access denied.',
                 403
@@ -202,7 +202,7 @@ class UsersApiController extends AbstractApiController
     )]
     public function store(StoreUserRequest $request)
     {
-        if($this->hasAccess($request, 'user:create')) {
+        if(!$this->hasAccess($request, 'user:create')) {
             return $this->error(
                 'Access denied.',
                 403
@@ -266,7 +266,7 @@ class UsersApiController extends AbstractApiController
     )]
     public function show(Request $request, string $id)
     {
-        if($this->hasAccess($request, 'user:read')) {
+        if(!$this->hasAccess($request, 'user:read')) {
             return $this->error(
                 'Access denied.',
                 403
@@ -319,7 +319,7 @@ class UsersApiController extends AbstractApiController
     )]
     public function update(UpdateUserRequest  $request, string $id)
     {
-        if($this->hasAccess($request, 'user:update')) {
+        if(!$this->hasAccess($request, 'user:update')) {
             return $this->error(
                 'Access denied.',
                 403
@@ -380,7 +380,7 @@ class UsersApiController extends AbstractApiController
     )]
     public function destroy(Request $request, string $id)
     {
-        if($this->hasAccess($request, 'user:delete')) {
+        if(!$this->hasAccess($request, 'user:delete')) {
             return $this->error(
                 'Access denied.',
                 403

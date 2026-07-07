@@ -66,7 +66,7 @@ class SettingsApiController extends AbstractApiController
     )]
     public function get(Request $request, string $key): JsonResponse
     {
-        if($this->hasAccess($request, 'setting:read')) {
+        if(!$this->hasAccess($request, 'setting:read')) {
             return $this->error(
                 'Access denied.',
                 403
@@ -130,7 +130,7 @@ class SettingsApiController extends AbstractApiController
     public function all(Request $request): JsonResponse
     {
 
-        if($this->hasAccess($request, 'setting:read')) {
+        if(!$this->hasAccess($request, 'setting:read')) {
             return $this->error(
                 'Access denied.',
                 403
@@ -206,7 +206,7 @@ class SettingsApiController extends AbstractApiController
     )]
     public function update(UpdateSettingRequest $request): JsonResponse
     {
-        if($this->hasAccess($request, 'setting:update')) {
+        if(!$this->hasAccess($request, 'setting:update')) {
             return $this->error(
                 'Access denied.',
                 403

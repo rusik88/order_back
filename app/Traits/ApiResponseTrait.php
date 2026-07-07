@@ -48,6 +48,6 @@ trait ApiResponseTrait
      */
     public function hasAccess(Request $request, string $ability): bool
     {
-        return !$request->user()->tokenCan($ability);
+        return $request->user()->tokenCan($ability);
     }
 }

@@ -98,7 +98,7 @@ class RoleApiController extends AbstractApiController
     )]
     public function index(Request $request): JsonResponse
     {
-        if($this->hasAccess($request, 'role:read')) {
+        if(!$this->hasAccess($request, 'role:read')) {
             return $this->error(
                 'Access denied.',
                 403
@@ -185,7 +185,7 @@ class RoleApiController extends AbstractApiController
     )]
     public function store(StoreRoleRequest $request): JsonResponse
     {
-        if($this->hasAccess($request, 'role:create')) {
+        if(!$this->hasAccess($request, 'role:create')) {
             return $this->error(
                 'Access denied.',
                 403
@@ -241,7 +241,7 @@ class RoleApiController extends AbstractApiController
     )]
     public function show(Request $request, string $id): JsonResponse
     {
-        if($this->hasAccess($request, 'role:read')) {
+        if(!$this->hasAccess($request, 'role:read')) {
             return $this->error(
                 'Access denied.',
                 403
@@ -295,7 +295,7 @@ class RoleApiController extends AbstractApiController
     )]
     public function update(UpdateRoleRequest $request, string $id): JsonResponse
     {
-        if($this->hasAccess($request, 'role:update')) {
+        if(!$this->hasAccess($request, 'role:update')) {
             return $this->error(
                 'Access denied.',
                 403
@@ -350,7 +350,7 @@ class RoleApiController extends AbstractApiController
     )]
     public function destroy(Request $request, string $id): JsonResponse
     {
-        if($this->hasAccess($request, 'role:delete')) {
+        if(!$this->hasAccess($request, 'role:delete')) {
             return $this->error(
                 'Access denied.',
                 403

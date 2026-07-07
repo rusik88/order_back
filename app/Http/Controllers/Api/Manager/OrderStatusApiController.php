@@ -98,7 +98,7 @@ class OrderStatusApiController extends AbstractApiController
     )]
     public function index(Request $request): JsonResponse
     {
-        if($this->hasAccess($request, 'order_status:read')) {
+        if(!$this->hasAccess($request, 'order_status:read')) {
             return $this->error(
                 'Access denied.',
                 403
@@ -185,7 +185,7 @@ class OrderStatusApiController extends AbstractApiController
     )]
     public function store(StoreOrderStatusRequest $request): JsonResponse
     {
-        if($this->hasAccess($request, 'order_status:create')) {
+        if(!$this->hasAccess($request, 'order_status:create')) {
             return $this->error(
                 'Access denied.',
                 403
@@ -234,7 +234,7 @@ class OrderStatusApiController extends AbstractApiController
     )]
     public function show(Request $request, string $id)
     {
-        if($this->hasAccess($request, 'order_status:read')) {
+        if(!$this->hasAccess($request, 'order_status:read')) {
             return $this->error(
                 'Access denied.',
                 403
@@ -288,7 +288,7 @@ class OrderStatusApiController extends AbstractApiController
     )]
     public function update(UpdateOrderStatusRequest $request, string $id): JsonResponse
     {
-        if($this->hasAccess($request, 'order_status:update')) {
+        if(!$this->hasAccess($request, 'order_status:update')) {
             return $this->error(
                 'Access denied.',
                 403
@@ -337,7 +337,7 @@ class OrderStatusApiController extends AbstractApiController
     )]
     public function destroy(Request $request, string $id): JsonResponse
     {
-        if($this->hasAccess($request, 'order_status:delete')) {
+        if(!$this->hasAccess($request, 'order_status:delete')) {
             return $this->error(
                 'Access denied.',
                 403
