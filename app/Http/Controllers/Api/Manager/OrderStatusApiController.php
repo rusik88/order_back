@@ -118,6 +118,8 @@ class OrderStatusApiController extends AbstractApiController
                 $query->orderBy($sortField, $sortDirection === 'desc' ? 'desc' : 'asc');
             });
 
+        $query->where('user_id', $request->user()->id);
+
         $order_statuses = $perPage === -1 ? $query->get() : $query->paginate($perPage);
 
         return $this->success([
@@ -194,7 +196,8 @@ class OrderStatusApiController extends AbstractApiController
         try {
             $order_status = OrderStatus::create([
                     "name" => $request->name,
-                    "slug" => $request->slug
+                    "slug" => $request->slug,
+                    "user_id" => $request->user()->id,
                 ]
             );
             return $this->success([
@@ -245,6 +248,8 @@ class OrderStatusApiController extends AbstractApiController
         if (!$order_status) {
             return $this->error('Order Status not found', Response::HTTP_NOT_FOUND);
         }
+
+        $order_status->load('user');
 
         return $this->success([
             'order_status' => $order_status,
