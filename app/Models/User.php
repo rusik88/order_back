@@ -58,6 +58,11 @@ class User extends Authenticatable
 
     public function order_status(): HasMany
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(OrderStatus::class);
+    }
+
+    public function order(): HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 }

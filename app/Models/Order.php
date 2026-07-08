@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class OrderStatus extends Model
+class Order extends Model
 {
     protected $fillable = [
         'name',
-        'slug',
-        'user_id'
+        'user_id',
+        'order_status_id',
+        'total',
+        'comment'
     ];
 
     public function user(): BelongsTo
@@ -19,8 +20,8 @@ class OrderStatus extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function order(): HasMany
+    public function order_status(): BelongsTo
     {
-        return $this->hasMany(Order::class);
+        return $this->belongsTo(OrderStatus::class);
     }
 }
