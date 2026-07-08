@@ -28,10 +28,13 @@ class OrderApiController extends Controller
         $perPage = (int) $request->query('per_page', 10);
         $filter_name = $request->query('name');
 
-        $sortField = $request->query('sort_field', 'name');
+        $sortField = $request->query('sort_figit eld', 'name');
         $sortDirection = $request->query('sort_direction', 'asc');
 
-        $query = OrderStatus::query()
+        $query = Order::query()
+            ->with([
+                'order_status',
+            ])
             ->when($filter_name, function ($query, $name) {
                 $query->where('name', 'like', "%{$name}%");
             })
