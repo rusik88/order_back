@@ -140,15 +140,20 @@ class AuthApiController extends AbstractApiController {
     )]
     public function register(RegisterRequest $request): JsonResponse {
         try {
+            $setting_default_role = (new SettingService())->get('default_role');
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'role_id' => $setting_default_role ?? null,
                 'password' => Hash::make($request->password),
             ]);
 
+            $user->load('role');
+
             return $this->success([
                 'user' => $user,
-                'auth_token' => $user->createToken($request->device, ["user:show"])->plainTextToken,
+                'auth_token' => $user->createToken($request->device, json_decode($user->role->permissions, true))->plainTextToken,
             ], "", Response::HTTP_CREATED);
 
         } catch(\Exception $err) {
