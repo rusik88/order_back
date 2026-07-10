@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Api\OpenApi\Entities\Orders;
+namespace App\Http\Controllers\Api\OpenApi\Entities\OrderStatuses;
 
 use App\Http\Controllers\Api\AbstractApiController;
 use OpenApi\Attributes as OA;
 
 #[OA\Get(
-    path: "/api/orders",
+    path: "/api/order_statuses",
     summary: "Get paginated orders list",
     security: [
         ["bearerAuth" => []]
     ],
-    tags: ["Order"],
+    tags: ["OrderStatus"],
     parameters: [
         new OA\Parameter(
             name: "page",
@@ -47,7 +47,7 @@ use OpenApi\Attributes as OA;
     responses: [
         new OA\Response(
             response: 200,
-            description: "Orders list",
+            description: "Order Statuses list",
             content: new OA\JsonContent(
                 properties: [
                     new OA\Property(property: "success", type: "boolean", example: true),
@@ -55,13 +55,13 @@ use OpenApi\Attributes as OA;
                         property: "data",
                         properties: [
                             new OA\Property(
-                                property: "orders",
+                                property: "order_statuses",
                                 type: "array",
                                 items: new OA\Items(
                                     properties: [
                                         new OA\Property(
-                                            property: "order",
-                                            ref: "#/components/schemas/Order"
+                                            property: "order_status",
+                                            ref: "#/components/schemas/OrderStatus"
                                         )
                                     ]
                                 )

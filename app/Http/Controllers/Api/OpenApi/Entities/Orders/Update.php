@@ -35,7 +35,7 @@ use OpenApi\Attributes as OA;
     responses: [
         new OA\Response(
             response: 200,
-            description: "Order created",
+            description: "Order updated",
             content: new OA\JsonContent(
                 properties: [
                     new OA\Property(property: "success", type: "boolean", example: true),

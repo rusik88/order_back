@@ -1,43 +1,41 @@
 <?php
 
-namespace App\Http\Controllers\Api\OpenApi\Entities\Orders;
+namespace App\Http\Controllers\Api\OpenApi\Entities\OrderStatuses;
 
 use App\Http\Controllers\Api\AbstractApiController;
 use OpenApi\Attributes as OA;
 
 #[OA\Post(
-    path: "/api/orders",
-    summary: "Create Order",
+    path: "/api/order_statuses",
+    summary: "Create Order Status",
     security: [
         ["bearerAuth" => []]
     ],
     requestBody: new OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
-            required: ["name", "order_staus_id", "total"],
+            required: ["name", "slug"],
             properties: [
                 new OA\Property(property: "name", type: "string", example: "Order name"),
-                new OA\Property(property: "order_status_id", type: "integer", example: 2),
-                new OA\Property(property: "total", type: "number", example: 250.50),
-                new OA\Property(property: "comment", type: "string", example: "Your comment...", nullable: true),
+                new OA\Property(property: "slug", type: "string", example: "order_name"),
             ]
         )
     ),
-    tags: ["Order"],
+    tags: ["OrderStatus"],
     responses: [
         new OA\Response(
             response: 201,
-            description: "Order created",
+            description: "Order Status created",
             content: new OA\JsonContent(
                 properties: [
                     new OA\Property(property: "success", type: "boolean", example: true),
-                    new OA\Property(property: "message", type: "string", example: "Order created successfully"),
+                    new OA\Property(property: "message", type: "string", example: "Order Status created successfully"),
                     new OA\Property(
                         property: "data",
                         properties: [
                             new OA\Property(
-                                property: "order",
-                                ref: "#/components/schemas/Order"
+                                property: "order_status",
+                                ref: "#/components/schemas/OrderStatus"
                             )
                         ],
                         type: "object"
@@ -62,11 +60,8 @@ use OpenApi\Attributes as OA;
                             "name" => [
                                 "The name field is required."
                             ],
-                            "order_status_id" => [
-                                "The selected order status id is invalid."
-                            ],
-                            "total" => [
-                                "The total field is required."
+                            "slug" => [
+                                "The slug field is required."
                             ]
                         ],
                         additionalProperties: new OA\AdditionalProperties(

@@ -315,338 +315,6 @@
                 ]
             }
         },
-        "/api/order_statuses": {
-            "get": {
-                "tags": [
-                    "Order Statuses"
-                ],
-                "summary": "Get paginated Order Statuses list",
-                "operationId": "5cfe837730a3d322b49722e3a87aa0fe",
-                "parameters": [
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "per_page",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "example": 10
-                        }
-                    },
-                    {
-                        "name": "name",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": ""
-                        }
-                    },
-                    {
-                        "name": "sort_field",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "id"
-                        }
-                    },
-                    {
-                        "name": "sort_direction",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "asc"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Order Statuses list",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "order_statuses": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer"
-                                                            },
-                                                            "name": {
-                                                                "type": "string"
-                                                            },
-                                                            "slug": {
-                                                                "type": "string"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "paginate": {
-                                                    "properties": {
-                                                        "current_page": {
-                                                            "type": "integer"
-                                                        },
-                                                        "from": {
-                                                            "type": "integer"
-                                                        },
-                                                        "last_page": {
-                                                            "type": "integer"
-                                                        },
-                                                        "per_page": {
-                                                            "type": "integer"
-                                                        },
-                                                        "to": {
-                                                            "type": "integer"
-                                                        },
-                                                        "total": {
-                                                            "type": "integer"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Order Statuses"
-                ],
-                "summary": "Create Order Statuses",
-                "operationId": "6891e9253c7a232d70d5ae46b452de1a",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "slug"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Administrator"
-                                    },
-                                    "slug": {
-                                        "type": "string",
-                                        "example": "admin"
-                                    },
-                                    "permissions": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        },
-                                        "example": [
-                                            "users.view",
-                                            "users.create"
-                                        ]
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Order Status created",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Order Status created successfully"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "order_statuses": {
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "integer"
-                                                        },
-                                                        "name": {
-                                                            "type": "string"
-                                                        },
-                                                        "slug": {
-                                                            "type": "string"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/order_statuses/{id}": {
-            "get": {
-                "tags": [
-                    "Order Statuses"
-                ],
-                "summary": "Get Order Status by id",
-                "operationId": "8d627d26c77cce7f1004ff04caf258ab",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Order Status found"
-                    },
-                    "404": {
-                        "description": "Order Status not found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Order Statuses"
-                ],
-                "summary": "Delete Order Status by id",
-                "operationId": "251a2dffd661076df48227b3d1f390d8",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Deleted"
-                    },
-                    "404": {
-                        "description": "Not found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "patch": {
-                "tags": [
-                    "Order Statuses"
-                ],
-                "summary": "Update Order Status by id",
-                "operationId": "87c6ac59d930dcf0dca218a7afa58ace",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Admin"
-                                    },
-                                    "slug": {
-                                        "type": "string",
-                                        "example": "admin"
-                                    },
-                                    "permissions": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        },
-                                        "example": [
-                                            "users.view"
-                                        ]
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Updated"
-                    },
-                    "404": {
-                        "description": "Not found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/roles": {
             "get": {
                 "tags": [
@@ -1552,6 +1220,410 @@
                 ]
             }
         },
+        "/api/order_statuses/{id}": {
+            "put": {
+                "tags": [
+                    "OrderStatus"
+                ],
+                "summary": "Update Order Status",
+                "operationId": "5c1e2db0bcf5dd7a77f488d2ba8b2f6d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "slug"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Order name"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "order_name"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Order Status updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order updated successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "order_status": {
+                                                    "$ref": "#/components/schemas/OrderStatus"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed. One or more request fields contain invalid values.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "name": [
+                                                    "The name field is required."
+                                                ],
+                                                "slug": [
+                                                    "The name field is required."
+                                                ]
+                                            },
+                                            "additionalProperties": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "OrderStatus"
+                ],
+                "summary": "Delete Order Status by id",
+                "operationId": "19ba0a08ca3a24c32e64c92a6ceb95f8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Order Status created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order Status deleted successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {}
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/order_statuses": {
+            "get": {
+                "tags": [
+                    "OrderStatus"
+                ],
+                "summary": "Get paginated orders list",
+                "operationId": "8b1f3602e61a3b93f3bab5dade7795df",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "sort_field",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "id"
+                        }
+                    },
+                    {
+                        "name": "sort_direction",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "desc"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order Statuses list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "order_statuses": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "order_status": {
+                                                                "$ref": "#/components/schemas/OrderStatus"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "paginate": {
+                                                    "$ref": "#/components/schemas/Pagination"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "OrderStatus"
+                ],
+                "summary": "Create Order Status",
+                "operationId": "76b5226b792f2e894e88cfd8336e4d97",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "slug"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Order name"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "order_name"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Order Status created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order Status created successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "order_status": {
+                                                    "$ref": "#/components/schemas/OrderStatus"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation failed. One or more request fields contain invalid values.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "name": [
+                                                    "The name field is required."
+                                                ],
+                                                "slug": [
+                                                    "The slug field is required."
+                                                ]
+                                            },
+                                            "additionalProperties": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerError"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/order/{id}": {
             "delete": {
                 "tags": [
@@ -1685,55 +1757,8 @@
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "id": {
-                                                                "type": "integer"
-                                                            },
-                                                            "name": {
-                                                                "type": "string"
-                                                            },
-                                                            "user_id": {
-                                                                "type": "number"
-                                                            },
-                                                            "order_status_id": {
-                                                                "type": "number"
-                                                            },
-                                                            "total": {
-                                                                "type": "number"
-                                                            },
-                                                            "comment": {
-                                                                "type": "string"
-                                                            },
-                                                            "created_at": {
-                                                                "type": "string"
-                                                            },
-                                                            "updated_at": {
-                                                                "type": "string"
-                                                            },
-                                                            "order_status": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "properties": {
-                                                                        "id": {
-                                                                            "type": "integer"
-                                                                        },
-                                                                        "name": {
-                                                                            "type": "string"
-                                                                        },
-                                                                        "slug": {
-                                                                            "type": "string"
-                                                                        },
-                                                                        "user_id": {
-                                                                            "type": "number"
-                                                                        },
-                                                                        "created_at": {
-                                                                            "type": "string"
-                                                                        },
-                                                                        "updated_at": {
-                                                                            "type": "string"
-                                                                        }
-                                                                    },
-                                                                    "type": "object"
-                                                                }
+                                                            "order": {
+                                                                "$ref": "#/components/schemas/Order"
                                                             }
                                                         },
                                                         "type": "object"
@@ -1823,7 +1848,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Order Status created successfully"
+                                            "example": "Order created successfully"
                                         },
                                         "data": {
                                             "properties": {
@@ -1948,7 +1973,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Order created",
+                        "description": "Order updated",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2209,10 +2234,6 @@
             "description": "Auth"
         },
         {
-            "name": "Order Statuses",
-            "description": "Order Statuses"
-        },
-        {
             "name": "Roles",
             "description": "Roles"
         },
@@ -2223,6 +2244,10 @@
         {
             "name": "Users",
             "description": "Users"
+        },
+        {
+            "name": "OrderStatus",
+            "description": "OrderStatus"
         },
         {
             "name": "Order",

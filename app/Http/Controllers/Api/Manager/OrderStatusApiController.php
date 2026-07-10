@@ -16,86 +16,6 @@ class OrderStatusApiController extends AbstractApiController
 {
     use ApiResponseTrait;
 
-    #[OA\Get(
-        path: "/api/order_statuses",
-        summary: "Get paginated Order Statuses list",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        tags: ["Order Statuses"],
-        parameters: [
-            new OA\Parameter(
-                name: "page",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "integer", example: 1)
-            ),
-            new OA\Parameter(
-                name: "per_page",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "integer", example: 10)
-            ),
-            new OA\Parameter(
-                name: "name",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "string", example: '')
-            ),
-            new OA\Parameter(
-                name: "sort_field",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "string", example: 'id')
-            ),
-            new OA\Parameter(
-                name: "sort_direction",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "string", example: 'asc')
-            )
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: "Order Statuses list",
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: "success", type: "boolean", example: true),
-                        new OA\Property(
-                            property: "data",
-                            properties: [
-                                new OA\Property(
-                                    property: "order_statuses",
-                                    type: "array",
-                                    items: new OA\Items(
-                                        properties: [
-                                            new OA\Property(property: "id", type: "integer"),
-                                            new OA\Property(property: "name", type: "string"),
-                                            new OA\Property(property: "slug", type: "string"),
-                                        ]
-                                    )
-                                ),
-                                new OA\Property(
-                                    property: "paginate",
-                                    properties: [
-                                        new OA\Property(property: "current_page", type: "integer"),
-                                        new OA\Property(property: "from", type: "integer"),
-                                        new OA\Property(property: "last_page", type: "integer"),
-                                        new OA\Property(property: "per_page", type: "integer"),
-                                        new OA\Property(property: "to", type: "integer"),
-                                        new OA\Property(property: "total", type: "integer"),
-                                    ],
-                                    type: "object"
-                                )
-                            ],
-                            type: "object"
-                        )
-                    ]
-                )
-            )
-        ]
-    )]
     public function index(Request $request): JsonResponse
     {
         if(!$this->hasAccess($request, 'order_status:read')) {
@@ -135,56 +55,6 @@ class OrderStatusApiController extends AbstractApiController
         ], 200);
     }
 
-    #[OA\Post(
-        path: "/api/order_statuses",
-        summary: "Create Order Statuses",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\JsonContent(
-                required: ["name", "slug"],
-                properties: [
-                    new OA\Property(property: "name", type: "string", example: "Administrator"),
-                    new OA\Property(property: "slug", type: "string", example: "admin"),
-                    new OA\Property(
-                        property: "permissions",
-                        type: "array",
-                        items: new OA\Items(type: "string"),
-                        example: ["users.view", "users.create"]
-                    )
-                ]
-            )
-        ),
-        tags: ["Order Statuses"],
-        responses: [
-            new OA\Response(
-                response: 201,
-                description: "Order Status created",
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: "success", type: "boolean", example: true),
-                        new OA\Property(property: "message", type: "string", example: "Order Status created successfully"),
-                        new OA\Property(
-                            property: "data",
-                            properties: [
-                                new OA\Property(
-                                    property: "order_statuses",
-                                    properties: [
-                                        new OA\Property(property: "id", type: "integer"),
-                                        new OA\Property(property: "name", type: "string"),
-                                        new OA\Property(property: "slug", type: "string"),
-                                    ],
-                                    type: "object"
-                                )
-                            ]
-                        )
-                    ]
-                )
-            )
-        ]
-    )]
     public function store(StoreOrderStatusRequest $request): JsonResponse
     {
         if(!$this->hasAccess($request, 'order_status:create')) {
@@ -209,32 +79,6 @@ class OrderStatusApiController extends AbstractApiController
         }
     }
 
-    #[OA\Get(
-        path: "/api/order_statuses/{id}",
-        summary: "Get Order Status by id",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        tags: ["Order Statuses"],
-        parameters: [
-            new OA\Parameter(
-                name: "id",
-                in: "path",
-                required: true,
-                schema: new OA\Schema(type: "integer")
-            )
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: "Order Status found",
-            ),
-            new OA\Response(
-                response: 404,
-                description: "Order Status not found"
-            )
-        ]
-    )]
     public function show(Request $request, string $id)
     {
         if(!$this->hasAccess($request, 'order_status:read')) {
@@ -256,41 +100,6 @@ class OrderStatusApiController extends AbstractApiController
         ]);
     }
 
-    #[OA\Patch(
-        path: "/api/order_statuses/{id}",
-        summary: "Update Order Status by id",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: "name", type: "string", example: "Admin"),
-                    new OA\Property(property: "slug", type: "string", example: "admin"),
-                    new OA\Property(
-                        property: "permissions",
-                        type: "array",
-                        items: new OA\Items(type: "string"),
-                        example: ["users.view"]
-                    )
-                ]
-            )
-        ),
-        tags: ["Order Statuses"],
-        parameters: [
-            new OA\Parameter(
-                name: "id",
-                in: "path",
-                required: true,
-                schema: new OA\Schema(type: "integer")
-            )
-        ],
-        responses: [
-            new OA\Response(response: 200, description: "Updated"),
-            new OA\Response(response: 404, description: "Not found")
-        ]
-    )]
     public function update(UpdateOrderStatusRequest $request, string $id): JsonResponse
     {
         if(!$this->hasAccess($request, 'order_status:update')) {
@@ -320,26 +129,6 @@ class OrderStatusApiController extends AbstractApiController
         }
     }
 
-    #[OA\Delete(
-        path: "/api/order_statuses/{id}",
-        summary: "Delete Order Status by id",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        tags: ["Order Statuses"],
-        parameters: [
-            new OA\Parameter(
-                name: "id",
-                in: "path",
-                required: true,
-                schema: new OA\Schema(type: "integer")
-            )
-        ],
-        responses: [
-            new OA\Response(response: 200, description: "Deleted"),
-            new OA\Response(response: 404, description: "Not found")
-        ]
-    )]
     public function destroy(Request $request, string $id): JsonResponse
     {
         if(!$this->hasAccess($request, 'order_status:delete')) {
