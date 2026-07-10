@@ -107,8 +107,8 @@ class OrderStatusApiController extends AbstractApiController
         $perPage = (int) $request->query('per_page', 10);
         $filter_name = $request->query('name');
 
-        $sortField = $request->query('sort_field', 'name');
-        $sortDirection = $request->query('sort_direction', 'asc');
+        $sortField = $request->query('sort_field', 'id');
+        $sortDirection = $request->query('sort_direction', 'desc');
 
         $query = OrderStatus::query()
             ->when($filter_name, function ($query, $name) {

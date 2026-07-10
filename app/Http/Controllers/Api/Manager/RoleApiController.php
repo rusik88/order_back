@@ -107,7 +107,7 @@ class RoleApiController extends AbstractApiController
         $perPage = (int) $request->query('per_page', 10);
         $filter_name = $request->query('name');
 
-        $sortField = $request->query('sort_field', 'name');
+        $sortField = $request->query('sort_field', 'id');
         $sortDirection = $request->query('sort_direction', 'asc');
 
         $query = Role::query()

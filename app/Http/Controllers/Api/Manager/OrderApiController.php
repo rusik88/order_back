@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers\Api\Manager;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\AbstractApiController;
 use App\Http\Requests\Api\Manager\Order\OrderRequest;
 use App\Models\Order;
-use App\Models\OrderStatus;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use OpenApi\Attributes as OA;
 
-class OrderApiController extends Controller
+class OrderApiController extends AbstractApiController
 {
     use ApiResponseTrait;
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         if(!$this->hasAccess($request, 'order:read')) {
@@ -28,8 +25,8 @@ class OrderApiController extends Controller
         $perPage = (int) $request->query('per_page', 10);
         $filter_name = $request->query('name');
 
-        $sortField = $request->query('sort_figit eld', 'name');
-        $sortDirection = $request->query('sort_direction', 'asc');
+        $sortField = $request->query('sort_field', 'id');
+        $sortDirection = $request->query('sort_direction', 'desc');
 
         $query = Order::query()
             ->with([
@@ -105,7 +102,7 @@ class OrderApiController extends Controller
             return $this->error('Order not found', Response::HTTP_NOT_FOUND);
         }
 
-        $order->load('user');
+        //$order->load('user');
         $order->load('order_status');
 
         return $this->success([
@@ -137,6 +134,8 @@ class OrderApiController extends Controller
                 "total"             => $request->total,
                 "comment"           => $request->comment
             ]);
+
+            $order->load('order_status');
 
             return $this->success([
                 'order' => $order,

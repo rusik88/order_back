@@ -113,8 +113,8 @@ class UsersApiController extends AbstractApiController
         $perPage = (int) $request->query('per_page', 10);
         $filter_name = $request->query('email');
 
-        $sortField = $request->query('sort_field', 'name');
-        $sortDirection = $request->query('sort_direction', 'asc');
+        $sortField = $request->query('sort_field', 'id');
+        $sortDirection = $request->query('sort_direction', 'desc');
 
         $users = User::query()
             ->leftJoin('roles', 'roles.id', '=', 'users.role_id')
