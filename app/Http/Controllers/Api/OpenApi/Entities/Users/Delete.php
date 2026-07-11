@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Api\OpenApi\Entities\Orders;
+namespace App\Http\Controllers\Api\OpenApi\Entities\Users;
 
 use App\Http\Controllers\Api\OpenApi\AbstractOpenApi;
 use OpenApi\Attributes as OA;
 
 #[OA\Delete(
-    path: "/api/orders/{id}",
-    summary: "Delete Order by id",
+    path: "/api/users/{id}",
+    summary: "Delete User by id",
     security: [
         ["bearerAuth" => []]
     ],
-    tags: ["Orders"],
+    tags: ["Users"],
     parameters: [
         new OA\Parameter(
             name: "id",
@@ -23,11 +23,11 @@ use OpenApi\Attributes as OA;
     responses: [
         new OA\Response(
             response: 200,
-            description: "Order deleted successfully",
+            description: "User deleted successfully",
             content: new OA\JsonContent(
                 properties: [
                     new OA\Property(property: "success", type: "boolean", example: true),
-                    new OA\Property(property: "message", type: "string", example: "Order deleted successfully"),
+                    new OA\Property(property: "message", type: "string", example: "User deleted successfully"),
                     new OA\Property(
                         property: "data",
                         type: "array",

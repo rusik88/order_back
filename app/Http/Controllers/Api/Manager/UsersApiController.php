@@ -17,90 +17,6 @@ class UsersApiController extends AbstractApiController
 {
     use ApiResponseTrait;
 
-    #[OA\Get(
-        path: "/api/users",
-        summary: "Get paginated users list",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        tags: ["Users"],
-        parameters: [
-            new OA\Parameter(
-                name: "page",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "integer", example: 1)
-            ),
-            new OA\Parameter(
-                name: "per_page",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "integer", example: 10)
-            ),
-            new OA\Parameter(
-                name: "email",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "string", example: 'Admin')
-            ),
-            new OA\Parameter(
-                name: "sort_field",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "string", example: 'name')
-            ),
-            new OA\Parameter(
-                name: "sort_direction",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "string", example: 'asc')
-            )
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: "Users list",
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: "success", type: "boolean", example: true),
-                        new OA\Property(
-                            property: "data",
-                            properties: [
-                                new OA\Property(
-                                    property: "users",
-                                    type: "array",
-                                    items: new OA\Items(
-                                        properties: [
-                                            new OA\Property(property: "id", type: "integer"),
-                                            new OA\Property(property: "role_id", type: "integer"),
-                                            new OA\Property(property: "name", type: "string"),
-                                            new OA\Property(property: "email", type: "string"),
-                                            new OA\Property(property: "email_verified_at", type: "string"),
-                                            new OA\Property(property: "created_at", type: "string"),
-                                            new OA\Property(property: "updated_at", type: "string"),
-                                        ]
-                                    )
-                                ),
-                                new OA\Property(
-                                    property: "paginate",
-                                    properties: [
-                                        new OA\Property(property: "current_page", type: "integer"),
-                                        new OA\Property(property: "from", type: "integer"),
-                                        new OA\Property(property: "last_page", type: "integer"),
-                                        new OA\Property(property: "per_page", type: "integer"),
-                                        new OA\Property(property: "to", type: "integer"),
-                                        new OA\Property(property: "total", type: "integer"),
-                                    ],
-                                    type: "object"
-                                )
-                            ],
-                            type: "object"
-                        )
-                    ]
-                )
-            )
-        ]
-    )]
     public function index(Request $request)
     {
         if(!$this->hasAccess($request, 'user:read')) {
@@ -149,57 +65,6 @@ class UsersApiController extends AbstractApiController
         ], 200);
     }
 
-    #[OA\Post(
-        path: "/api/users",
-        summary: "Create user",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\JsonContent(
-                required: ["name", "email", "role_id"],
-                properties: [
-                    new OA\Property(property: "name", type: "string", example: "Administrator"),
-                    new OA\Property(property: "email", type: "string", example: "admin"),
-                    new OA\Property(property: "role_id", type: "number", example: 3),
-                    new OA\Property(property: "password", type: "string", example: "password"),
-                    new OA\Property(property: "password_confirmation", type: "string", example: "password")
-                ]
-            )
-        ),
-        tags: ["Users"],
-        responses: [
-            new OA\Response(
-                response: 201,
-                description: "Role created",
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: "success", type: "boolean", example: true),
-                        new OA\Property(property: "message", type: "string", example: "Role created successfully"),
-                        new OA\Property(
-                            property: "data",
-                            properties: [
-                                new OA\Property(
-                                    property: "user",
-                                    properties: [
-                                        new OA\Property(property: "id", type: "integer"),
-                                        new OA\Property(property: "role_id", type: "integer"),
-                                        new OA\Property(property: "name", type: "string"),
-                                        new OA\Property(property: "email", type: "string"),
-                                        new OA\Property(property: "email_verified_at", type: "string"),
-                                        new OA\Property(property: "created_at", type: "string"),
-                                        new OA\Property(property: "updated_at", type: "string"),
-                                    ],
-                                    type: "object"
-                                )
-                            ]
-                        )
-                    ]
-                )
-            )
-        ]
-    )]
     public function store(StoreUserRequest $request)
     {
         if(!$this->hasAccess($request, 'user:create')) {
@@ -238,32 +103,6 @@ class UsersApiController extends AbstractApiController
         }
     }
 
-    #[OA\Get(
-        path: "/api/users/{id}",
-        summary: "Get user by id",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        tags: ["Users"],
-        parameters: [
-            new OA\Parameter(
-                name: "id",
-                in: "path",
-                required: true,
-                schema: new OA\Schema(type: "integer")
-            )
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: "User found",
-            ),
-            new OA\Response(
-                response: 404,
-                description: "User not found"
-            )
-        ]
-    )]
     public function show(Request $request, string $id)
     {
         if(!$this->hasAccess($request, 'user:read')) {
@@ -285,38 +124,6 @@ class UsersApiController extends AbstractApiController
         ]);
     }
 
-    #[OA\Patch(
-        path: "/api/users/{id}",
-        summary: "Update user",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: "name", type: "string", example: "Administrator"),
-                    new OA\Property(property: "email", type: "string", example: "admin"),
-                    new OA\Property(property: "role_id", type: "number", example: 3),
-                    new OA\Property(property: "password", type: "string", example: "password"),
-                    new OA\Property(property: "password_confirmation", type: "string", example: "password")
-                ]
-            )
-        ),
-        tags: ["Users"],
-        parameters: [
-            new OA\Parameter(
-                name: "id",
-                in: "path",
-                required: true,
-                schema: new OA\Schema(type: "integer")
-            )
-        ],
-        responses: [
-            new OA\Response(response: 200, description: "Updated"),
-            new OA\Response(response: 404, description: "Not found")
-        ]
-    )]
     public function update(UpdateUserRequest  $request, string $id)
     {
         if(!$this->hasAccess($request, 'user:update')) {
@@ -358,26 +165,6 @@ class UsersApiController extends AbstractApiController
         }
     }
 
-    #[OA\Delete(
-        path: "/api/users/{id}",
-        summary: "Delete user",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        tags: ["Users"],
-        parameters: [
-            new OA\Parameter(
-                name: "id",
-                in: "path",
-                required: true,
-                schema: new OA\Schema(type: "integer")
-            )
-        ],
-        responses: [
-            new OA\Response(response: 200, description: "Deleted"),
-            new OA\Response(response: 404, description: "Not found")
-        ]
-    )]
     public function destroy(Request $request, string $id)
     {
         if(!$this->hasAccess($request, 'user:delete')) {

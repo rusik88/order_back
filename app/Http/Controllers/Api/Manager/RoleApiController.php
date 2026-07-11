@@ -16,86 +16,6 @@ class RoleApiController extends AbstractApiController
 {
     use ApiResponseTrait;
 
-    #[OA\Get(
-        path: "/api/roles",
-        summary: "Get paginated roles list",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        tags: ["Roles"],
-        parameters: [
-            new OA\Parameter(
-                name: "page",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "integer", example: 1)
-            ),
-            new OA\Parameter(
-                name: "per_page",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "integer", example: 10)
-            ),
-            new OA\Parameter(
-                name: "name",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "string", example: '')
-            ),
-            new OA\Parameter(
-                name: "sort_field",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "string", example: 'name')
-            ),
-            new OA\Parameter(
-                name: "sort_direction",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "string", example: 'asc')
-            )
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: "Roles list",
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: "success", type: "boolean", example: true),
-                        new OA\Property(
-                            property: "data",
-                            properties: [
-                                new OA\Property(
-                                    property: "roles",
-                                    type: "array",
-                                    items: new OA\Items(
-                                        properties: [
-                                            new OA\Property(property: "id", type: "integer"),
-                                            new OA\Property(property: "name", type: "string"),
-                                            new OA\Property(property: "slug", type: "string"),
-                                        ]
-                                    )
-                                ),
-                                new OA\Property(
-                                    property: "paginate",
-                                    properties: [
-                                        new OA\Property(property: "current_page", type: "integer"),
-                                        new OA\Property(property: "from", type: "integer"),
-                                        new OA\Property(property: "last_page", type: "integer"),
-                                        new OA\Property(property: "per_page", type: "integer"),
-                                        new OA\Property(property: "to", type: "integer"),
-                                        new OA\Property(property: "total", type: "integer"),
-                                    ],
-                                    type: "object"
-                                )
-                            ],
-                            type: "object"
-                        )
-                    ]
-                )
-            )
-        ]
-    )]
     public function index(Request $request): JsonResponse
     {
         if(!$this->hasAccess($request, 'role:read')) {
@@ -133,56 +53,6 @@ class RoleApiController extends AbstractApiController
         ], 200);
     }
 
-    #[OA\Post(
-        path: "/api/roles",
-        summary: "Create role",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\JsonContent(
-                required: ["name", "slug"],
-                properties: [
-                    new OA\Property(property: "name", type: "string", example: "Administrator"),
-                    new OA\Property(property: "slug", type: "string", example: "admin"),
-                    new OA\Property(
-                        property: "permissions",
-                        type: "array",
-                        items: new OA\Items(type: "string"),
-                        example: ["users.view", "users.create"]
-                    )
-                ]
-            )
-        ),
-        tags: ["Roles"],
-        responses: [
-            new OA\Response(
-                response: 201,
-                description: "Role created",
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: "success", type: "boolean", example: true),
-                        new OA\Property(property: "message", type: "string", example: "Role created successfully"),
-                        new OA\Property(
-                            property: "data",
-                            properties: [
-                                new OA\Property(
-                                    property: "role",
-                                    properties: [
-                                        new OA\Property(property: "id", type: "integer"),
-                                        new OA\Property(property: "name", type: "string"),
-                                        new OA\Property(property: "slug", type: "string"),
-                                    ],
-                                    type: "object"
-                                )
-                            ]
-                        )
-                    ]
-                )
-            )
-        ]
-    )]
     public function store(StoreRoleRequest $request): JsonResponse
     {
         if(!$this->hasAccess($request, 'role:create')) {
@@ -213,32 +83,6 @@ class RoleApiController extends AbstractApiController
         }
     }
 
-    #[OA\Get(
-        path: "/api/roles/{id}",
-        summary: "Get role by id",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        tags: ["Roles"],
-        parameters: [
-            new OA\Parameter(
-                name: "id",
-                in: "path",
-                required: true,
-                schema: new OA\Schema(type: "integer")
-            )
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: "Role found",
-            ),
-            new OA\Response(
-                response: 404,
-                description: "Role not found"
-            )
-        ]
-    )]
     public function show(Request $request, string $id): JsonResponse
     {
         if(!$this->hasAccess($request, 'role:read')) {
@@ -258,41 +102,6 @@ class RoleApiController extends AbstractApiController
         ]);
     }
 
-    #[OA\Patch(
-        path: "/api/roles/{id}",
-        summary: "Update role",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: "name", type: "string", example: "Admin"),
-                    new OA\Property(property: "slug", type: "string", example: "admin"),
-                    new OA\Property(
-                        property: "permissions",
-                        type: "array",
-                        items: new OA\Items(type: "string"),
-                        example: ["users.view"]
-                    )
-                ]
-            )
-        ),
-        tags: ["Roles"],
-        parameters: [
-            new OA\Parameter(
-                name: "id",
-                in: "path",
-                required: true,
-                schema: new OA\Schema(type: "integer")
-            )
-        ],
-        responses: [
-            new OA\Response(response: 200, description: "Updated"),
-            new OA\Response(response: 404, description: "Not found")
-        ]
-    )]
     public function update(UpdateRoleRequest $request, string $id): JsonResponse
     {
         if(!$this->hasAccess($request, 'role:update')) {
@@ -328,26 +137,6 @@ class RoleApiController extends AbstractApiController
         }
     }
 
-    #[OA\Delete(
-        path: "/api/roles/{id}",
-        summary: "Delete role",
-        security: [
-            ["bearerAuth" => []]
-        ],
-        tags: ["Roles"],
-        parameters: [
-            new OA\Parameter(
-                name: "id",
-                in: "path",
-                required: true,
-                schema: new OA\Schema(type: "integer")
-            )
-        ],
-        responses: [
-            new OA\Response(response: 200, description: "Deleted"),
-            new OA\Response(response: 404, description: "Not found")
-        ]
-    )]
     public function destroy(Request $request, string $id): JsonResponse
     {
         if(!$this->hasAccess($request, 'role:delete')) {
@@ -379,7 +168,5 @@ class RoleApiController extends AbstractApiController
         } catch(\Exception $err) {
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-
     }
 }

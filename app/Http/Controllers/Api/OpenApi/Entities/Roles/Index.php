@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Api\OpenApi\Entities\OrderStatuses;
+namespace App\Http\Controllers\Api\OpenApi\Entities\Roles;
 
 use App\Http\Controllers\Api\OpenApi\AbstractOpenApi;
 use OpenApi\Attributes as OA;
 
 #[OA\Get(
-    path: "/api/order_statuses",
-    summary: "Get paginated orders list",
+    path: "/api/roles",
+    summary: "Get paginated roles list",
     security: [
         ["bearerAuth" => []]
     ],
-    tags: ["Order Statuses"],
+    tags: ["Roles"],
     parameters: [
         new OA\Parameter(
             name: "page",
@@ -35,7 +35,7 @@ use OpenApi\Attributes as OA;
             name: "sort_field",
             in: "query",
             required: false,
-            schema: new OA\Schema(type: "string", example: 'id')
+            schema: new OA\Schema(type: "string", example: 'name')
         ),
         new OA\Parameter(
             name: "sort_direction",
@@ -47,7 +47,7 @@ use OpenApi\Attributes as OA;
     responses: [
         new OA\Response(
             response: 200,
-            description: "Order Statuses list",
+            description: "Roles list",
             content: new OA\JsonContent(
                 properties: [
                     new OA\Property(property: "success", type: "boolean", example: true),
@@ -55,13 +55,13 @@ use OpenApi\Attributes as OA;
                         property: "data",
                         properties: [
                             new OA\Property(
-                                property: "order_statuses",
+                                property: "roles",
                                 type: "array",
                                 items: new OA\Items(
                                     properties: [
                                         new OA\Property(
-                                            property: "order_status",
-                                            ref: "#/components/schemas/OrderStatus"
+                                            property: "role",
+                                            ref: "#/components/schemas/Role"
                                         )
                                     ]
                                 )

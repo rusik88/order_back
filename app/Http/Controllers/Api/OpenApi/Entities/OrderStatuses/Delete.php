@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\OpenApi\Entities\OrderStatuses;
 
-use App\Http\Controllers\Api\AbstractApiController;
+use App\Http\Controllers\Api\OpenApi\AbstractOpenApi;
 use OpenApi\Attributes as OA;
 
 #[OA\Delete(
@@ -11,7 +11,7 @@ use OpenApi\Attributes as OA;
     security: [
         ["bearerAuth" => []]
     ],
-    tags: ["OrderStatus"],
+    tags: ["Order Statuses"],
     parameters: [
         new OA\Parameter(
             name: "id",
@@ -55,6 +55,6 @@ use OpenApi\Attributes as OA;
     ]
 )]
 
-class Delete extends AbstractApiController
+class Delete extends AbstractOpenApi
 {
 }

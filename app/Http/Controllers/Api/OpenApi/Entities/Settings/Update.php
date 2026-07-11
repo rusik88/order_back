@@ -1,46 +1,60 @@
 <?php
 
-namespace App\Http\Controllers\Api\OpenApi\Entities\OrderStatuses;
+namespace App\Http\Controllers\Api\OpenApi\Entities\Settings;
 
 use App\Http\Controllers\Api\OpenApi\AbstractOpenApi;
 use OpenApi\Attributes as OA;
 
-#[OA\Post(
-    path: "/api/order_statuses",
-    summary: "Create Order Status",
-    security: [
-        ["bearerAuth" => []]
-    ],
+#[OA\Put(
+    path: "/api/settings",
+    summary: "Update settings",
+    security: [["bearerAuth" => []]],
     requestBody: new OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
-            required: ["name", "slug"],
+            required: ["settings"],
             properties: [
-                new OA\Property(property: "name", type: "string", example: "Order name"),
-                new OA\Property(property: "slug", type: "string", example: "order_name"),
-            ]
-        )
-    ),
-    tags: ["Order Statuses"],
-    responses: [
-        new OA\Response(
-            response: 201,
-            description: "Order Status created",
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: "success", type: "boolean", example: true),
-                    new OA\Property(property: "message", type: "string", example: "Order Status created successfully"),
-                    new OA\Property(
-                        property: "data",
+                new OA\Property(
+                    property: "settings",
+                    type: "array",
+                    items: new OA\Items(
+                        required: ["key", "value"],
                         properties: [
                             new OA\Property(
-                                property: "order_status",
-                                ref: "#/components/schemas/OrderStatus"
+                                property: "key",
+                                type: "string",
+                                example: "token_lifetime"
+                            ),
+                            new OA\Property(
+                                property: "value",
+                                type: "number",
+                                example: "3600"
                             )
                         ],
                         type: "object"
                     )
-                ]
+                )
+            ],
+            type: "object"
+        )
+    ),
+    tags: ["Settings"],
+    responses: [
+        new OA\Response(
+            response: 200,
+            description: "Settings updated successfully",
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "success", type: "boolean", example: true),
+                    new OA\Property(property: "message", type: "string", example: "Settings updated successfully"),
+                    new OA\Property(
+                        property: "data",
+                        type: "array",
+                        items: new OA\Items(type: "object"),
+                        example: []
+                    )
+                ],
+                type: "object"
             )
         ),
         new OA\Response(
@@ -57,17 +71,10 @@ use OpenApi\Attributes as OA;
                         property: "errors",
                         type: "object",
                         example: [
-                            "name" => [
-                                "The name field is required."
-                            ],
-                            "slug" => [
-                                "The slug field is required."
+                            "settings" => [
+                                "The settings field is required."
                             ]
-                        ],
-                        additionalProperties: new OA\AdditionalProperties(
-                            type: "array",
-                            items: new OA\Items(type: "string")
-                        )
+                        ]
                     )
                 ]
             )
@@ -91,6 +98,7 @@ use OpenApi\Attributes as OA;
     ]
 )]
 
-class Store extends AbstractOpenApi
+
+class Update extends AbstractOpenApi
 {
 }

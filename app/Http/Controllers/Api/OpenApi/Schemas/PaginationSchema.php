@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\OpenApi\Schemas;
 
-use App\Http\Controllers\Api\AbstractApiController;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
@@ -43,6 +42,6 @@ use OpenApi\Attributes as OA;
     ],
     type: "object"
 )]
-class PaginationSchema extends AbstractApiController
+class PaginationSchema
 {
 }

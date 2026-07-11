@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api\OpenApi\Entities\OrderStatuses;
+namespace App\Http\Controllers\Api\OpenApi\Entities\Roles;
 
 use App\Http\Controllers\Api\OpenApi\AbstractOpenApi;
 use OpenApi\Attributes as OA;
 
 #[OA\Post(
-    path: "/api/order_statuses",
-    summary: "Create Order Status",
+    path: "/api/roles",
+    summary: "Create Role Status",
     security: [
         ["bearerAuth" => []]
     ],
@@ -16,26 +16,26 @@ use OpenApi\Attributes as OA;
         content: new OA\JsonContent(
             required: ["name", "slug"],
             properties: [
-                new OA\Property(property: "name", type: "string", example: "Order name"),
-                new OA\Property(property: "slug", type: "string", example: "order_name"),
+                new OA\Property(property: "name", type: "string", example: "Role name"),
+                new OA\Property(property: "slug", type: "string", example: "role_name"),
             ]
         )
     ),
-    tags: ["Order Statuses"],
+    tags: ["Roles"],
     responses: [
         new OA\Response(
             response: 201,
-            description: "Order Status created",
+            description: "Role Status created",
             content: new OA\JsonContent(
                 properties: [
                     new OA\Property(property: "success", type: "boolean", example: true),
-                    new OA\Property(property: "message", type: "string", example: "Order Status created successfully"),
+                    new OA\Property(property: "message", type: "string", example: "Role created successfully"),
                     new OA\Property(
                         property: "data",
                         properties: [
                             new OA\Property(
-                                property: "order_status",
-                                ref: "#/components/schemas/OrderStatus"
+                                property: "role",
+                                ref: "#/components/schemas/Role"
                             )
                         ],
                         type: "object"
@@ -63,11 +63,7 @@ use OpenApi\Attributes as OA;
                             "slug" => [
                                 "The slug field is required."
                             ]
-                        ],
-                        additionalProperties: new OA\AdditionalProperties(
-                            type: "array",
-                            items: new OA\Items(type: "string")
-                        )
+                        ]
                     )
                 ]
             )

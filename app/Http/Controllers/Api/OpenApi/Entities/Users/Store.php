@@ -1,41 +1,44 @@
 <?php
 
-namespace App\Http\Controllers\Api\OpenApi\Entities\OrderStatuses;
+namespace App\Http\Controllers\Api\OpenApi\Entities\Users;
 
 use App\Http\Controllers\Api\OpenApi\AbstractOpenApi;
 use OpenApi\Attributes as OA;
 
 #[OA\Post(
-    path: "/api/order_statuses",
-    summary: "Create Order Status",
+    path: "/api/users",
+    summary: "Create Order",
     security: [
         ["bearerAuth" => []]
     ],
     requestBody: new OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
-            required: ["name", "slug"],
+            required: ["name", "role_id", "email", "password", "password_confirmation"],
             properties: [
-                new OA\Property(property: "name", type: "string", example: "Order name"),
-                new OA\Property(property: "slug", type: "string", example: "order_name"),
+                new OA\Property(property: "name", type: "string", example: "User name"),
+                new OA\Property(property: "role_id", type: "integer", example: 2),
+                new OA\Property(property: "email", type: "string", example: "test@test.com"),
+                new OA\Property(property: "password", type: "string", example: "12345678"),
+                new OA\Property(property: "password_confirmation", type: "string", example: "12345678"),
             ]
         )
     ),
-    tags: ["Order Statuses"],
+    tags: ["Users"],
     responses: [
         new OA\Response(
             response: 201,
-            description: "Order Status created",
+            description: "User created",
             content: new OA\JsonContent(
                 properties: [
                     new OA\Property(property: "success", type: "boolean", example: true),
-                    new OA\Property(property: "message", type: "string", example: "Order Status created successfully"),
+                    new OA\Property(property: "message", type: "string", example: "User created successfully"),
                     new OA\Property(
                         property: "data",
                         properties: [
                             new OA\Property(
-                                property: "order_status",
-                                ref: "#/components/schemas/OrderStatus"
+                                property: "user",
+                                ref: "#/components/schemas/User"
                             )
                         ],
                         type: "object"
@@ -60,14 +63,19 @@ use OpenApi\Attributes as OA;
                             "name" => [
                                 "The name field is required."
                             ],
-                            "slug" => [
-                                "The slug field is required."
+                            "role_id" => [
+                                "The selected user role id is invalid."
+                            ],
+                            "email" => [
+                                "The total field is required."
+                            ],
+                            "password" => [
+                                "The password field is required."
+                            ],
+                            "password_confirmation" => [
+                                "The password_confirmation field is required."
                             ]
-                        ],
-                        additionalProperties: new OA\AdditionalProperties(
-                            type: "array",
-                            items: new OA\Items(type: "string")
-                        )
+                        ]
                     )
                 ]
             )

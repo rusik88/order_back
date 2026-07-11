@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\OpenApi\Entities\Orders;
 
-use App\Http\Controllers\Api\AbstractApiController;
+use App\Http\Controllers\Api\OpenApi\AbstractOpenApi;
 use OpenApi\Attributes as OA;
 
 #[OA\Put(
@@ -23,7 +23,7 @@ use OpenApi\Attributes as OA;
             ]
         )
     ),
-    tags: ["Order"],
+    tags: ["Orders"],
     parameters: [
         new OA\Parameter(
             name: "id",
@@ -104,6 +104,6 @@ use OpenApi\Attributes as OA;
     ]
 )]
 
-class Update extends AbstractApiController
+class Update extends AbstractOpenApi
 {
 }

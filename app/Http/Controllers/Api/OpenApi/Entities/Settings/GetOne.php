@@ -1,37 +1,48 @@
 <?php
 
-namespace App\Http\Controllers\Api\OpenApi\Entities\Orders;
+namespace App\Http\Controllers\Api\OpenApi\Entities\Settings;
 
 use App\Http\Controllers\Api\OpenApi\AbstractOpenApi;
 use OpenApi\Attributes as OA;
 
-#[OA\Delete(
-    path: "/api/orders/{id}",
-    summary: "Delete Order by id",
+#[OA\Get(
+    path: "/api/settings/{key}",
+    summary: "Get setting value by key",
     security: [
         ["bearerAuth" => []]
     ],
-    tags: ["Orders"],
+    tags: ["Settings"],
     parameters: [
         new OA\Parameter(
-            name: "id",
+            name: "key",
             in: "path",
             required: true,
-            schema: new OA\Schema(type: "integer")
+            schema: new OA\Schema(type: "string")
         )
     ],
     responses: [
         new OA\Response(
             response: 200,
-            description: "Order deleted successfully",
+            description: "Setting found",
             content: new OA\JsonContent(
                 properties: [
                     new OA\Property(property: "success", type: "boolean", example: true),
-                    new OA\Property(property: "message", type: "string", example: "Order deleted successfully"),
+                    new OA\Property(property: "message", type: "string", example: ""),
                     new OA\Property(
                         property: "data",
-                        type: "array",
-                        items: new OA\Items()
+                        properties: [
+                            new OA\Property(
+                                property: "setting",
+                                type: "array",
+                                items: new OA\Items(
+                                    properties: [
+                                        new OA\Property(property: "key", type: "string"),
+                                        new OA\Property(property: "value", type: "string")
+                                    ]
+                                )
+                            )
+                        ],
+                        type: "object"
                     )
                 ]
             )
@@ -55,6 +66,6 @@ use OpenApi\Attributes as OA;
     ]
 )]
 
-class Delete extends AbstractOpenApi
+class GetOne extends AbstractOpenApi
 {
 }

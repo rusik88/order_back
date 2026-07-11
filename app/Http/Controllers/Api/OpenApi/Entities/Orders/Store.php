@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\OpenApi\Entities\Orders;
 
-use App\Http\Controllers\Api\AbstractApiController;
+use App\Http\Controllers\Api\OpenApi\AbstractOpenApi;
 use OpenApi\Attributes as OA;
 
 #[OA\Post(
@@ -23,7 +23,7 @@ use OpenApi\Attributes as OA;
             ]
         )
     ),
-    tags: ["Order"],
+    tags: ["Orders"],
     responses: [
         new OA\Response(
             response: 201,
@@ -96,6 +96,6 @@ use OpenApi\Attributes as OA;
     ]
 )]
 
-class Store extends AbstractApiController
+class Store extends AbstractOpenApi
 {
 }

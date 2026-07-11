@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\OpenApi\Entities\Orders;
 
-use App\Http\Controllers\Api\AbstractApiController;
+use App\Http\Controllers\Api\OpenApi\AbstractOpenApi;
 use OpenApi\Attributes as OA;
 
 #[OA\Get(
@@ -11,7 +11,7 @@ use OpenApi\Attributes as OA;
     security: [
         ["bearerAuth" => []]
     ],
-    tags: ["Order"],
+    tags: ["Orders"],
     parameters: [
         new OA\Parameter(
             name: "page",
@@ -94,6 +94,6 @@ use OpenApi\Attributes as OA;
         )
     ]
 )]
-class Index extends AbstractApiController
+class Index extends AbstractOpenApi
 {
 }

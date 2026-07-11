@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api\OpenApi\Entities\OrderStatuses;
+namespace App\Http\Controllers\Api\OpenApi\Entities\Roles;
 
 use App\Http\Controllers\Api\OpenApi\AbstractOpenApi;
 use OpenApi\Attributes as OA;
 
-#[OA\Post(
-    path: "/api/order_statuses",
-    summary: "Create Order Status",
+#[OA\Put(
+    path: "/api/roles/{id}",
+    summary: "Update Role",
     security: [
         ["bearerAuth" => []]
     ],
@@ -16,25 +16,33 @@ use OpenApi\Attributes as OA;
         content: new OA\JsonContent(
             required: ["name", "slug"],
             properties: [
-                new OA\Property(property: "name", type: "string", example: "Order name"),
-                new OA\Property(property: "slug", type: "string", example: "order_name"),
+                new OA\Property(property: "name", type: "string", example: "Role name"),
+                new OA\Property(property: "slug", type: "string", example: "role_name")
             ]
         )
     ),
-    tags: ["Order Statuses"],
+    tags: ["Roles"],
+    parameters: [
+        new OA\Parameter(
+            name: "id",
+            in: "path",
+            required: true,
+            schema: new OA\Schema(type: "integer")
+        )
+    ],
     responses: [
         new OA\Response(
-            response: 201,
-            description: "Order Status created",
+            response: 200,
+            description: "Role updated",
             content: new OA\JsonContent(
                 properties: [
                     new OA\Property(property: "success", type: "boolean", example: true),
-                    new OA\Property(property: "message", type: "string", example: "Order Status created successfully"),
+                    new OA\Property(property: "message", type: "string", example: "Role updated successfully"),
                     new OA\Property(
                         property: "data",
                         properties: [
                             new OA\Property(
-                                property: "order_status",
+                                property: "roles",
                                 ref: "#/components/schemas/OrderStatus"
                             )
                         ],
@@ -61,13 +69,9 @@ use OpenApi\Attributes as OA;
                                 "The name field is required."
                             ],
                             "slug" => [
-                                "The slug field is required."
-                            ]
-                        ],
-                        additionalProperties: new OA\AdditionalProperties(
-                            type: "array",
-                            items: new OA\Items(type: "string")
-                        )
+                                "The name field is required."
+                            ],
+                        ]
                     )
                 ]
             )
@@ -91,6 +95,6 @@ use OpenApi\Attributes as OA;
     ]
 )]
 
-class Store extends AbstractOpenApi
+class Update extends AbstractOpenApi
 {
 }
