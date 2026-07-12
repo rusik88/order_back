@@ -10,7 +10,6 @@ use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use OpenApi\Attributes as OA;
 
 class RoleApiController extends AbstractApiController
 {

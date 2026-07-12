@@ -11,7 +11,6 @@ use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
-use OpenApi\Attributes as OA;
 
 class UsersApiController extends AbstractApiController
 {

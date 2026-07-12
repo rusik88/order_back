@@ -8,7 +8,6 @@ use App\Models\Order;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use OpenApi\Attributes as OA;
 
 class OrderApiController extends AbstractApiController
 {
@@ -56,9 +55,6 @@ class OrderApiController extends AbstractApiController
         ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(OrderRequest $request)
     {
         if(!$this->hasAccess($request, 'order:create')) {
@@ -85,9 +81,6 @@ class OrderApiController extends AbstractApiController
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Request $request, string $id)
     {
         if(!$this->hasAccess($request, 'order:read')) {
@@ -110,9 +103,6 @@ class OrderApiController extends AbstractApiController
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         if(!$this->hasAccess($request, 'order:update')) {
@@ -146,9 +136,6 @@ class OrderApiController extends AbstractApiController
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Request $request, string $id)
     {
         if(!$this->hasAccess($request, 'order:delete')) {
