@@ -20,8 +20,7 @@ class LoggerService implements LoggerInterface {
 
         if(!empty($this->channels)) {
             foreach ($this->channels as $channel) {
-                $logger = new $channel;
-                $logger->log($log);
+                app($channel)->log($log);
             }
         }
     }
