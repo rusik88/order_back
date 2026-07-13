@@ -79,8 +79,6 @@ class AuthApiController extends AbstractApiController {
 
             $user->load('role');
 
-            throw new \Exception("Error Auth");
-
             return $this->success([
                 'user' => $user,
                 'auth_token' => $user->createToken($request->device, json_decode($user->role->permissions, true))->plainTextToken
@@ -160,6 +158,7 @@ class AuthApiController extends AbstractApiController {
             ], "", Response::HTTP_CREATED);
 
         } catch(\Exception $err) {
+            $this->log($request, "Auth", "register", $err);
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -225,6 +224,7 @@ class AuthApiController extends AbstractApiController {
         try {
             $request->user()->tokens()->delete();
         } catch(\Exception $err) {
+            $this->log($request, "Auth", "logout", $err);
             $this->error($err->getMessage(), Response::HTTP_UNAUTHORIZED);
         }
 

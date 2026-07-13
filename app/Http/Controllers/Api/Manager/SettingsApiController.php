@@ -13,8 +13,9 @@ class SettingsApiController extends AbstractApiController
 {
     use ApiResponseTrait;
 
-    public function __construct(private SettingService $settingService) {}
-
+    public function __construct(private readonly SettingService $settingService) {
+        parent::__construct();
+    }
 
     public function get(Request $request, string $key): JsonResponse
     {
@@ -25,22 +26,26 @@ class SettingsApiController extends AbstractApiController
             );
         }
 
-        $setting = $this->settingService->get($key);
+        try {
+            $setting = $this->settingService->get($key);
 
-        if(!$setting) return $this->error('Setting not found', Response::HTTP_NOT_FOUND);
+            if(!$setting) return $this->error('Setting not found', Response::HTTP_NOT_FOUND);
 
-        return $this->success([
-            'setting' => [
-                'key'   => $key,
-                'value' => $setting,
-            ],
-        ]);
+            return $this->success([
+                'setting' => [
+                    'key'   => $key,
+                    'value' => $setting,
+                ],
+            ]);
+        } catch(\Exception $err) {
+            $this->log($request, "Setting", "get", $err);
+            return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
 
     public function all(Request $request): JsonResponse
     {
-
         if(!$this->hasAccess($request, 'setting:read')) {
             return $this->error(
                 'Access denied.',
@@ -48,13 +53,18 @@ class SettingsApiController extends AbstractApiController
             );
         }
 
-        $settings = $this->settingService->all();
+        try {
+            $settings = $this->settingService->all();
 
-        if(!$settings) return $this->error('Settings not found', Response::HTTP_NOT_FOUND);
+            if(!$settings) return $this->error('Settings not found', Response::HTTP_NOT_FOUND);
 
-        return $this->success([
-            'settings' => $settings,
-        ]);
+            return $this->success([
+                'settings' => $settings,
+            ]);
+        } catch(\Exception $err) {
+            $this->log($request, "Setting", "all", $err);
+            return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
 
@@ -73,6 +83,7 @@ class SettingsApiController extends AbstractApiController
                 $this->settingService->setAll($settings);
             }
         } catch(\Exception $err) {
+            $this->log($request, "Setting", "update", $err);
             return $this->error($err->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 

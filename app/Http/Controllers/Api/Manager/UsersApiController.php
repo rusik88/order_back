@@ -8,6 +8,7 @@ use App\Http\Requests\Api\Manager\User\UpdateUserRequest;
 use App\Models\Role;
 use App\Models\User;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -16,7 +17,7 @@ class UsersApiController extends AbstractApiController
 {
     use ApiResponseTrait;
 
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         if(!$this->hasAccess($request, 'user:read')) {
             return $this->error(
@@ -25,46 +26,51 @@ class UsersApiController extends AbstractApiController
             );
         }
 
-        $perPage = (int) $request->query('per_page', 10);
-        $filter_name = $request->query('email');
+        try {
+            $perPage = (int) $request->query('per_page', 10);
+            $filter_name = $request->query('email');
 
-        $sortField = $request->query('sort_field', 'id');
-        $sortDirection = $request->query('sort_direction', 'desc');
+            $sortField = $request->query('sort_field', 'id');
+            $sortDirection = $request->query('sort_direction', 'desc');
 
-        $users = User::query()
-            ->leftJoin('roles', 'roles.id', '=', 'users.role_id')
-            ->select('users.*')
-            ->when($filter_name, function ($query, $email) {
-                $query->where('users.email', 'like', "%{$email}%");
-            })
-            ->when(
-                in_array($sortField, ['name', 'email', 'id', 'created_at', 'role_name']),
-                function ($query) use ($sortField, $sortDirection) {
+            $users = User::query()
+                ->leftJoin('roles', 'roles.id', '=', 'users.role_id')
+                ->select('users.*')
+                ->when($filter_name, function ($query, $email) {
+                    $query->where('users.email', 'like', "%{$email}%");
+                })
+                ->when(
+                    in_array($sortField, ['name', 'email', 'id', 'created_at', 'role_name']),
+                    function ($query) use ($sortField, $sortDirection) {
 
-                    if ($sortField === 'role_name') {
-                        $query->orderBy('roles.name', $sortDirection);
-                    } else {
-                        $query->orderBy("users.$sortField", $sortDirection);
+                        if ($sortField === 'role_name') {
+                            $query->orderBy('roles.name', $sortDirection);
+                        } else {
+                            $query->orderBy("users.$sortField", $sortDirection);
+                        }
                     }
-                }
-            )
-            ->with('role')
-            ->paginate($perPage);
+                )
+                ->with('role')
+                ->paginate($perPage);
 
-        return $this->success([
-            'users' => $users->items(),
-            'paginate' => [
-                'current_page' => $users->currentPage(),
-                'from' => $users->firstItem(),
-                'last_page' => $users->lastPage(),
-                'per_page' => $users->perPage(),
-                'to' => $users->lastItem(),
-                'total' => $users->total()
-            ]
-        ], 200);
+            return $this->success([
+                'users'     => $users->items(),
+                'paginate'  => [
+                    'current_page'  => $users->currentPage(),
+                    'from'          => $users->firstItem(),
+                    'last_page'     => $users->lastPage(),
+                    'per_page'      => $users->perPage(),
+                    'to'            => $users->lastItem(),
+                    'total'         => $users->total()
+                ]
+            ], 200);
+        } catch (\Exception $err) {
+            $this->log($request, "User", "index", $err);
+            return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request): JsonResponse
     {
         if(!$this->hasAccess($request, 'user:create')) {
             return $this->error(
@@ -83,10 +89,10 @@ class UsersApiController extends AbstractApiController
 
             try {
                 $user = User::create([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'role_id' => $role->id,
-                    'password' => Hash::make($request->password),
+                    'name'      => $request->name,
+                    'email'     => $request->email,
+                    'role_id'   => $role->id,
+                    'password'  => Hash::make($request->password),
                 ]);
 
                 return $this->success([
@@ -94,15 +100,17 @@ class UsersApiController extends AbstractApiController
                 ], "", Response::HTTP_CREATED);
 
             } catch(\Exception $err) {
+                $this->log($request, "User", "create", $err);
                 return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
             }
 
         } catch(\Exception $err) {
+            $this->log($request, "User", "create_common", $err);
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    public function show(Request $request, string $id)
+    public function show(Request $request, string $id): JsonResponse
     {
         if(!$this->hasAccess($request, 'user:read')) {
             return $this->error(
@@ -111,19 +119,24 @@ class UsersApiController extends AbstractApiController
             );
         }
 
-        $user = User::find($id);
-        $user->load('role');
+        try {
+            $user = User::find($id);
+            $user->load('role');
 
-        if (!$user) {
-            return $this->error('User not found', Response::HTTP_NOT_FOUND);
+            if (!$user) {
+                return $this->error('User not found', Response::HTTP_NOT_FOUND);
+            }
+
+            return $this->success([
+                'user' => $user,
+            ]);
+        } catch(\Exception $err) {
+            $this->log($request, "User", "show", $err);
+            return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        return $this->success([
-            'user' => $user,
-        ]);
     }
 
-    public function update(UpdateUserRequest  $request, string $id)
+    public function update(UpdateUserRequest  $request, string $id): JsonResponse
     {
         if(!$this->hasAccess($request, 'user:update')) {
             return $this->error(
@@ -141,9 +154,9 @@ class UsersApiController extends AbstractApiController
 
             if($user->role !== null && $user->role->slug !== 'super_admin') {
                 $user_data = [
-                    "name" => $request->name,
-                    "email" => $request->email,
-                    "role_id" => $request->role_id,
+                    "name"      => $request->name,
+                    "email"     => $request->email,
+                    "role_id"   => $request->role_id,
                 ];
 
                 if ($request->filled('password')) {
@@ -160,11 +173,12 @@ class UsersApiController extends AbstractApiController
             }
 
         } catch(\Exception $err) {
+            $this->log($request, "User", "update", $err);
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    public function destroy(Request $request, string $id)
+    public function destroy(Request $request, string $id): JsonResponse
     {
         if(!$this->hasAccess($request, 'user:delete')) {
             return $this->error(
@@ -190,6 +204,7 @@ class UsersApiController extends AbstractApiController
             }
 
         } catch(\Exception $err) {
+            $this->log($request, "User", "delete", $err);
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

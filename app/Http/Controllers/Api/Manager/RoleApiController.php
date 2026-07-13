@@ -23,33 +23,39 @@ class RoleApiController extends AbstractApiController
                 403
             );
         }
-        $perPage = (int) $request->query('per_page', 10);
-        $filter_name = $request->query('name');
 
-        $sortField = $request->query('sort_field', 'id');
-        $sortDirection = $request->query('sort_direction', 'asc');
+        try {
+            $perPage = (int) $request->query('per_page', 10);
+            $filter_name = $request->query('name');
 
-        $query = Role::query()
-            ->when($filter_name, function ($query, $name) {
-                $query->where('name', 'like', "%{$name}%");
-            })
-            ->when(in_array($sortField, ['name', 'slug', 'id', 'created_at']), function ($query) use ($sortField, $sortDirection) {
-                $query->orderBy($sortField, $sortDirection === 'desc' ? 'desc' : 'asc');
-            });
+            $sortField = $request->query('sort_field', 'id');
+            $sortDirection = $request->query('sort_direction', 'asc');
 
-        $roles = $perPage === -1 ? $query->get() : $query->paginate($perPage);
+            $query = Role::query()
+                ->when($filter_name, function ($query, $name) {
+                    $query->where('name', 'like', "%{$name}%");
+                })
+                ->when(in_array($sortField, ['name', 'slug', 'id', 'created_at']), function ($query) use ($sortField, $sortDirection) {
+                    $query->orderBy($sortField, $sortDirection === 'desc' ? 'desc' : 'asc');
+                });
 
-        return $this->success([
-            'roles' => $perPage !== -1 ? $roles->items() : $roles,
-            'paginate' => [
-                'current_page' => $perPage !== -1 ? $roles->currentPage() : 1,
-                'from' => $perPage !== -1 ? $roles->firstItem() : 1,
-                'last_page' => $perPage !== -1 ? $roles->lastPage() : 1,
-                'per_page' => $perPage !== -1 ? $roles->perPage() : -1,
-                'to' => $perPage !== -1 ? $roles->lastItem() : count($roles),
-                'total' => $perPage !== -1 ? $roles->total() : count($roles)
-            ]
-        ], 200);
+            $roles = $perPage === -1 ? $query->get() : $query->paginate($perPage);
+
+            return $this->success([
+                'roles' => $perPage !== -1 ? $roles->items() : $roles,
+                'paginate' => [
+                    'current_page'  => $perPage !== -1 ? $roles->currentPage() : 1,
+                    'from'          => $perPage !== -1 ? $roles->firstItem() : 1,
+                    'last_page'     => $perPage !== -1 ? $roles->lastPage() : 1,
+                    'per_page'      => $perPage !== -1 ? $roles->perPage() : -1,
+                    'to'            => $perPage !== -1 ? $roles->lastItem() : count($roles),
+                    'total'         => $perPage !== -1 ? $roles->total() : count($roles)
+                ]
+            ], 200);
+        } catch(\Exception $err) {
+            $this->log($request, "Role", "index", $err);
+            return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function store(StoreRoleRequest $request): JsonResponse
@@ -64,9 +70,9 @@ class RoleApiController extends AbstractApiController
         try {
             if($request->slug !== 'super_admin') {
                 $role = Role::create([
-                        "name" => $request->name,
-                        "slug" => $request->slug,
-                        "permissions" => json_encode($request->permissions)
+                        "name"          => $request->name,
+                        "slug"          => $request->slug,
+                        "permissions"   => json_encode($request->permissions)
                     ]
                 );
                 return $this->success([
@@ -78,6 +84,7 @@ class RoleApiController extends AbstractApiController
 
 
         } catch(\Exception $err) {
+            $this->log($request, "Role", "store", $err);
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -90,6 +97,8 @@ class RoleApiController extends AbstractApiController
                 403
             );
         }
+
+        try {
         $role = Role::find($id);
 
         if (!$role) {
@@ -99,6 +108,10 @@ class RoleApiController extends AbstractApiController
         return $this->success([
             'role' => $role,
         ]);
+        } catch(\Exception $err) {
+            $this->log($request, "Role", "show", $err);
+            return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function update(UpdateRoleRequest $request, string $id): JsonResponse
@@ -119,9 +132,9 @@ class RoleApiController extends AbstractApiController
 
             if($role->slug !== 'super_admin') {
                 $role->update([
-                    "name" => $request->name,
-                    "slug" => $request->slug,
-                    "permissions" => json_encode($request->permissions)
+                    "name"          => $request->name,
+                    "slug"          => $request->slug,
+                    "permissions"   => json_encode($request->permissions)
                 ]);
 
                 return $this->success([
@@ -132,6 +145,7 @@ class RoleApiController extends AbstractApiController
             }
 
         } catch(\Exception $err) {
+            $this->log($request, "Role", "update", $err);
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -165,6 +179,7 @@ class RoleApiController extends AbstractApiController
 
 
         } catch(\Exception $err) {
+            $this->log($request, "Role", "destroy", $err);
             return $this->error($err->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
