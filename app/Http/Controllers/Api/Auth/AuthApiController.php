@@ -79,12 +79,15 @@ class AuthApiController extends AbstractApiController {
 
             $user->load('role');
 
+            throw new \Exception("Error Auth");
+
             return $this->success([
                 'user' => $user,
                 'auth_token' => $user->createToken($request->device, json_decode($user->role->permissions, true))->plainTextToken
             ], "", 200);
 
         } catch(\Exception $err) {
+            $this->log($request, "Auth", "login", $err);
             return $this->error($err->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }

@@ -1,5 +1,5 @@
 <?php
-namespace App\Services\Logger\Contracts\LoggerInterface;
+namespace App\Services\Logger\Contracts;
 
 use App\Services\Logger\Data\LogData;
 

@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\Logger\Channels;
 
-use App\Services\Logger\Contracts\LoggerInterface\LoggerInterface;
+use App\Services\Logger\Contracts\LoggerInterface;
 use App\Services\Logger\Data\LogData;
 
 class LoggerService implements LoggerInterface {
@@ -17,9 +17,11 @@ class LoggerService implements LoggerInterface {
 
     public function log(LogData $log): void
     {
+
         if(!empty($this->channels)) {
             foreach ($this->channels as $channel) {
-                $channel->log($log);
+                $logger = new $channel;
+                $logger->log($log);
             }
         }
     }

@@ -34,7 +34,7 @@ abstract class AbstractChannelLogger {
                 'code' => $log->exception->getCode(),
                 'file' => $log->exception->getFile(),
                 'line' => $log->exception->getLine(),
-                'trace' => $log->exception->getTraceAsString(),
+                //'trace' => $log->exception->getTraceAsString(),
             ],
         ];
     }

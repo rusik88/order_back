@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\Logger\Channels;
 
-use App\Services\Logger\Contracts\LoggerInterface\LoggerInterface;
+use App\Services\Logger\Contracts\LoggerInterface;
 use App\Services\Logger\Data\LogData;
 use Illuminate\Support\Facades\Log;
 
